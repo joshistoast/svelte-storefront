@@ -1,38 +1,33 @@
-# create-svelte
+# Svelte Storefront
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+This is my attempt to svelte-ify Shopify's Hydrogen storefront features. It's a work in progress, but I'm hoping to get it to a point where it's a good boilerplate/template for building a custom Shopify storefront with little hassle and built their favorite js framework (sveltekit).
 
-## Creating a project
+## Getting Started
 
-If you're seeing this, you've probably already done this step. Congrats!
+1. Clone the repo
+2. Install Dependencies
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+   ```bash
+    pnpm install
+   ```
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+   > You can use your package manager of choice, but I strongly recommend `pnpm`
 
-## Developing
+3. Create a `.env` file in the root of the project and add the following variables
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+   I've included a `.env.example` file to use as a template, the two variables that really only need to be changed are
 
-```bash
-npm run dev
+   ```bash
+   PUBLIC_STOREFRONT_API_TOKEN="your-public-token-here"
+   PUBLIC_STORE_DOMAIN="your-store.myshopify.com"
+   ```
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+4. Run the project locally
 
-## Building
+   ```bash
+   pnpm dev
+   ```
 
-To create a production version of your app:
+5. Profit!
 
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+   Of course there's more to it than that, but this should get you started. I'll be adding more documentation as I go along (assuming I don't get burnt out).
