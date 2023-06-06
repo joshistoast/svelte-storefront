@@ -228,12 +228,23 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
       cartId = result.cart?.id ?? cartId
       break
     }
-    case CartAction.UPDATE_BUYER_IDENTITY:
+    case CartAction.UPDATE_BUYER_IDENTITY: {
       invariant(cartId, 'No cart id')
 
+      const buyerIdentity = formData.get('buyerIdentity')
+        ? (JSON.parse(
+          String(formData.get('buyerIdentity')),
+        ) as CartBuyerIdentityInput)
+        : ({} as CartBuyerIdentityInput)
 
+      result = cartId
+        ? await cartUpdateBuyerIdentity(cartId, buyerIdentity, storefront)
+        : await cartCreate({ buyerIdentity }, storefront)
+
+      cartId = result.cart?.id ?? cartId
 
       break
+    }
     default:
       invariant(false, `${action} is not a valid cart action`)
   }
