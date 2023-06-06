@@ -11,6 +11,7 @@ $: ({ layout } = data)
 
 <header>
   <h1>{layout.shop.name}</h1>
+  <a href="/cart">Cart</a>
 </header>
 
 <main>

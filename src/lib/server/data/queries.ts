@@ -236,3 +236,47 @@ export const DISCOUNT_CODES_UPDATE = gql`
     }
   }
 `
+
+export const LINES_UPDATE_MUTATION = gql`
+  ${LINES_CART_FRAGMENT}
+  ${USER_ERROR_FRAGMENT}
+  mutation (
+    $cartId: ID!
+    $lines: [CartLineUpdateInput!]!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext (country: $country, language: $language) {
+    cartLinesUpdate (cartId: $cartId, lines: $lines) {
+      cart {
+        ...CartLinesFragment
+      }
+      errors: userErrors {
+        ...ErrorFragment
+      }
+    }
+  }
+`
+
+export const UPDATE_CART_BUYER = gql`
+  ${USER_ERROR_FRAGMENT}
+  mutation (
+    $cartId: ID!
+    $buyer: CartBuyerIdentityInput!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext (country: $country, language: $language) {
+    cartBuyerIdentityUpdate (cartId: $cartId, buyer: $buyer) {
+      cart {
+        id
+        buyerIdentity {
+          email
+          phone
+          countryCode
+        }
+      }
+      errors: userErrors {
+        ...ErrorFragment
+      }
+    }
+  }
+`

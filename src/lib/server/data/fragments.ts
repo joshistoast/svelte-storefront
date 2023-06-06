@@ -258,6 +258,7 @@ export const CART_FRAGMENT = gql`
             ... on ProductVariant {
               id
               availableForSale
+              quantityAvailable
               compareAtPrice {
                 ...MoneyFragment
               }

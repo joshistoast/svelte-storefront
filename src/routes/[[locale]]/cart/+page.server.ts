@@ -15,6 +15,8 @@ import type {
   CartCreatePayload,
   CartLinesRemovePayload,
   CartDiscountCodesUpdatePayload,
+  CartLinesUpdatePayload,
+  CartBuyerIdentityUpdatePayload,
   Maybe,
   Cart,
   Locale,
@@ -25,6 +27,8 @@ import {
   ADD_LINES_MUTATION,
   REMOVE_LINES_MUTATION,
   DISCOUNT_CODES_UPDATE,
+  LINES_UPDATE_MUTATION,
+  UPDATE_CART_BUYER,
 } from '$lib/server/data'
 import invariant from 'tiny-invariant'
 import { getCartId, isLocalPath } from '$lib/utils'
@@ -84,6 +88,18 @@ const cartRemove = async (cartId: string, lineIds: Cart['id'][], storefront: Sto
   return data.cartLinesRemove
 }
 
+const cartUpdate = async (cartId: string, lines: CartLineInput[], storefront: Storefront) => {
+  // update lines in a cart
+  const { data } = await storefront.mutate<{
+    cartLinesUpdate: CartLinesUpdatePayload,
+  }>({
+    mutation: LINES_UPDATE_MUTATION,
+    variables: { cartId, lines },
+  })
+  invariant(data?.cartLinesUpdate, 'No data returned from update lines mutation')
+  return data.cartLinesUpdate
+}
+
 const cartDiscountCodesUpdate = async (cartId: string, discountCodes: string[], storefront: Storefront) => {
   const { data } = await storefront.mutate<{
     cartDiscountCodesUpdate: CartDiscountCodesUpdatePayload
@@ -93,6 +109,20 @@ const cartDiscountCodesUpdate = async (cartId: string, discountCodes: string[], 
   })
   invariant(data?.cartDiscountCodesUpdate, 'No data returned from the discount codes update mutation')
   return data.cartDiscountCodesUpdate
+}
+
+const cartUpdateBuyerIdentity = async (cartId: string, buyerIdentity: CartBuyerIdentityInput, storefront: Storefront) => {
+  const { data } = await storefront.mutate<{
+    cartBuyerIdentityUpdate: CartBuyerIdentityUpdatePayload
+  }>({
+    mutation: UPDATE_CART_BUYER,
+    variables: { cartId, buyerIdentity },
+  })
+  invariant(
+    data?.cartBuyerIdentityUpdate,
+    'No data returned from the buyer identity update mutation'
+  )
+  return data.cartBuyerIdentityUpdate
 }
 
 export const load: PageServerLoad = async ({ request, locals }) => {
@@ -127,6 +157,7 @@ enum CartAction {
 }
 const handleCartAction = async (event: RequestEvent, action: CartAction) => {
   const { request, locals, cookies } = event
+  const { storefront } = locals
   const formData = await request.formData()
   const countryCode = formData.get('countryCode') ? formData.get('countryCode') as CartBuyerIdentityInput['countryCode'] : undefined
 
@@ -139,7 +170,6 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
 
   switch (action) {
     case CartAction.ADD_TO_CART: {
-      invariant(cartId, 'No cart id')
       const lines = formData.get('lines')
         ? (JSON.parse(String(formData.get('lines'))) as CartLineInput[])
         : ([] as CartLineInput[])
@@ -153,7 +183,7 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
           buyerIdentity: countryCode ? { countryCode } : undefined,
         }, locals.storefront)
       else
-        result = await cartAdd(cartId, lines, locals.storefront)
+        result = await cartAdd(cartId, lines, storefront)
 
       cartId = result.cart?.id ?? cartId
       break
@@ -169,14 +199,22 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
       if (!cartId)
         result = { cart: undefined, errors: undefined }
       else
-        result = await cartRemove(cartId, lineIds, locals.storefront)
+        result = await cartRemove(cartId, lineIds, storefront)
 
       cartId = result.cart?.id ?? cartId
       break
     }
     case CartAction.UPDATE_CART: {
-      // TODO: implement
-      console.log('update cart')
+      invariant(cartId, 'No cart id')
+
+      const lines = formData.get('lines')
+        ? (JSON.parse(String(formData.get('lines'))) as CartLineInput[])
+        : ([] as CartLineInput[])
+      invariant(lines.length, 'No lines to update')
+
+      result = await cartUpdate(cartId, lines, storefront)
+      cartId = result.cart?.id ?? cartId
+
       break
     }
     case CartAction.UPDATE_DISCOUNT: {
@@ -191,7 +229,10 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
       break
     }
     case CartAction.UPDATE_BUYER_IDENTITY:
-      console.log('update buyer identity')
+      invariant(cartId, 'No cart id')
+
+
+
       break
     default:
       invariant(false, `${action} is not a valid cart action`)
@@ -216,7 +257,7 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
 export const actions: Actions = {
   ADD_TO_CART: async (event) => handleCartAction(event, CartAction.ADD_TO_CART),
   REMOVE_FROM_CART: async (event) => handleCartAction(event, CartAction.REMOVE_FROM_CART),
-  UPDATE_CART: async (event) => {},
+  UPDATE_CART: async (event) => handleCartAction(event, CartAction.UPDATE_CART),
   UPDATE_DISCOUNT: async (event) => handleCartAction(event, CartAction.UPDATE_DISCOUNT),
-  UPDATE_BUYER_IDENTITY: async (event) => {},
+  UPDATE_BUYER_IDENTITY: async (event) => handleCartAction(event, CartAction.UPDATE_BUYER_IDENTITY)
 }

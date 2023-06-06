@@ -3,6 +3,7 @@ import type { PageServerData, ActionData } from './$types'
 import { applyAction, deserialize } from '$app/forms'
 import { invalidateAll } from '$app/navigation'
 import { CartAction } from '$lib/types'
+import QuantityUpdate from '$lib/components/Cart/QuantityUpdate.svelte'
 
 export let data: PageServerData
 export let form: ActionData
@@ -28,7 +29,7 @@ const handleCartAction = async (event: Event, action: CartAction) => {
 }
 </script>
 
-<h1>Cart - {cart?.lines.edges.length || 0}</h1>
+<h1>Cart - {cart?.totalQuantity ?? 0}</h1>
 
 {#if form}
   {#each form.errors || [] as error}
@@ -40,19 +41,30 @@ const handleCartAction = async (event: Event, action: CartAction) => {
   <p>Cart is empty</p>
 {:else}
   {#each cart?.lines?.edges.map((e) => e.node) as line}
-    {@const { id, quantity, merchandise } = line}
-    {@const { selectedOptions, product } = merchandise}
+    {@const {
+      id,
+      quantity,
+      merchandise } = line}
+    {@const {
+      selectedOptions,
+      product } = merchandise}
 
     <div class="flex flex-col items-start gap-2 p-2 bg-neutral-100">
       <a href="/products/{product.handle}">{product.title}</a>
       <div class="text-sm">
-        <p>{quantity || 0} x {line.merchandise.price.amount}</p>
+        <p>{quantity || 0} x {line.cost.amountPerQuantity.amount}</p>
         {#if merchandise.title !== 'Default Title'}
           {#each selectedOptions as option}
             <p>{option.name}: {option.value}</p>
           {/each}
         {/if}
       </div>
+      <form on:submit|preventDefault={(e) => handleCartAction(e, CartAction.UPDATE_CART)}>
+        <QuantityUpdate
+          {line}
+          {quantity}
+          maxQuantity={merchandise.quantityAvailable}/>
+      </form>
       <form on:submit|preventDefault={(e) => handleCartAction(e, CartAction.REMOVE_FROM_CART)}>
         <input type="hidden" name="lineIds" value={JSON.stringify([id])} />
         <button type="submit">Remove Item</button>
