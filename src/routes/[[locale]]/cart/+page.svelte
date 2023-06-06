@@ -52,7 +52,7 @@ const handleCartAction = async (event: Event, action: CartAction) => {
     <div class="flex flex-col items-start gap-2 p-2 bg-neutral-100">
       <a href="/products/{product.handle}">{product.title}</a>
       <div class="text-sm">
-        <p>{quantity || 0} x {line.cost.amountPerQuantity.amount}</p>
+        <p>{quantity || 0} x {line.cost.amountPerQuantity.amount} = {line.cost.totalAmount.amount}</p>
         {#if merchandise.title !== 'Default Title'}
           {#each selectedOptions as option}
             <p>{option.name}: {option.value}</p>
