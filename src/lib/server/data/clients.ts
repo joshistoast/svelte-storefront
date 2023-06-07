@@ -1,7 +1,10 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client/core'
 import { env } from '$env/dynamic/public'
 
-const endpointUrl = `https://${env.PUBLIC_STORE_DOMAIN}/api/${env.PUBLIC_STOREFRONT_API_VERSION}/graphql.json`
+const apiVersion = env.PUBLIC_STOREFRONT_API_VERSION || '2023-04'
+const storeDomain = env.PUBLIC_STORE_DOMAIN
+
+const endpointUrl = `https://${storeDomain}/api/${apiVersion}/graphql.json`
 
 const shopify = new ApolloClient({
   uri: endpointUrl,
