@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { LayoutServerData } from './$types'
 import HeadTemplate from '$lib/components/HeadTemplate.svelte'
+import CountrySelector from '$lib/components/CountrySelector.svelte'
 import '../../app.css'
 
 export let data: LayoutServerData
@@ -18,7 +19,9 @@ $: ({ shop, cart } = data.layout)
   <slot />
 </main>
 
-<footer />
+<footer>
+  <CountrySelector />
+</footer>
 
 <style lang="postcss">
 :global(body) {
