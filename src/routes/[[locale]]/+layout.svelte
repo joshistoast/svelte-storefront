@@ -14,6 +14,14 @@ $: ({ shop, cart } = data.layout)
   <a href="/cart">Cart - {cart?.totalQuantity ?? 0}</a>
 </header>
 
-<main>
+<main class="flex-1">
   <slot />
 </main>
+
+<footer />
+
+<style lang="postcss">
+:global(body) {
+  @apply flex flex-col min-h-screen;
+}
+</style>
