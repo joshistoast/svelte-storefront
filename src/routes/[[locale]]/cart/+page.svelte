@@ -4,6 +4,7 @@ import { applyAction, deserialize } from '$app/forms'
 import { invalidateAll } from '$app/navigation'
 import { CartAction } from '$lib/types'
 import QuantityUpdate from '$lib/components/Cart/QuantityUpdate.svelte'
+import Money from '$lib/components/Money.svelte'
 
 export let data: PageServerData
 export let form: ActionData
@@ -52,7 +53,7 @@ const handleCartAction = async (event: Event, action: CartAction) => {
     <div class="flex flex-col items-start gap-2 p-2 bg-neutral-100">
       <a href="/products/{product.handle}">{product.title}</a>
       <div class="text-sm">
-        <p>{quantity || 0} x {line.cost.amountPerQuantity.amount} = {line.cost.totalAmount.amount}</p>
+        <p><Money money={line.cost.amountPerQuantity} /> x {quantity || 0} = <Money money={line.cost.totalAmount} /></p>
         {#if merchandise.title !== 'Default Title'}
           {#each selectedOptions as option}
             <p>{option.name}: {option.value}</p>
@@ -87,6 +88,6 @@ const handleCartAction = async (event: Event, action: CartAction) => {
         <button type="submit">Apply Discount</button>
       {/if}
     </form>
-    <a href={cart.checkoutUrl}>Continue to Checkout - {cart.cost.subtotalAmount.amount}</a>
+    <a href={cart.checkoutUrl}>Continue to Checkout - <Money money={cart.cost.subtotalAmount} /></a>
   </div>
 {/if}

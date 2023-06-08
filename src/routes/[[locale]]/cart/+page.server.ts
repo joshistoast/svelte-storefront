@@ -53,13 +53,17 @@ const cartRetrieve = async (cartId: string, storefront: Storefront, locale?: Loc
   return data
 }
 
-const cartCreate = async (input: CartInput, storefront: Storefront) => {
+const cartCreate = async (input: CartInput, storefront: Storefront, locale?: Locale) => {
   // create a cart
   const { data } = await storefront.mutate<{
     cartCreate: CartCreatePayload
   }>({
     mutation: CREATE_CART_MUTATION,
-    variables: { input },
+    variables: {
+      input,
+      country: locale?.country || undefined,
+      language: locale?.language || undefined,
+    },
   })
   invariant(data?.cartCreate, 'No cart returned from cartCreate mutation')
   return data.cartCreate
@@ -157,7 +161,7 @@ enum CartAction {
 }
 const handleCartAction = async (event: RequestEvent, action: CartAction) => {
   const { request, locals, cookies } = event
-  const { storefront } = locals
+  const { storefront, locale } = locals
   const formData = await request.formData()
   const countryCode = formData.get('countryCode') ? formData.get('countryCode') as CartBuyerIdentityInput['countryCode'] : undefined
 
@@ -181,7 +185,7 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
         result = await cartCreate({
           lines,
           buyerIdentity: countryCode ? { countryCode } : undefined,
-        }, locals.storefront)
+        }, locals.storefront, locale)
       else
         result = await cartAdd(cartId, lines, storefront)
 

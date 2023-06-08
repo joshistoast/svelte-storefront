@@ -40,7 +40,7 @@ if (withoutTrailingZeros || withoutTrailingZeros) {
   }
 }
 </script>
-<div {...$$restProps}>
+<div {...$$restProps} class="inline">
   <span>{output}</span>
   {#if measurement && measurement.referenceUnit}
     <slot name="measurement-separator" />
