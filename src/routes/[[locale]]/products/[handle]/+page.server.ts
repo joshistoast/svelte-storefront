@@ -1,24 +1,17 @@
 import { error } from '@sveltejs/kit'
 import { productQuery, recommendedProductsQuery } from '$lib/server/data'
 import type { PageServerLoad } from './$types'
-import type { SelectedOptionInput } from '$lib/types'
 import invariant from 'tiny-invariant'
 
-export const load: PageServerLoad = async ({ params, url, locals, setHeaders }) => {
+export const load: PageServerLoad = async ({ params, locals, setHeaders }) => {
   const { storefront, locale } = locals
   const { handle } = params
   invariant(handle, 'Missing product handle')
-
-  const selectedOptions: SelectedOptionInput[] = []
-  url.searchParams.forEach((value, key) => {
-    selectedOptions.push({name: key, value})
-  })
 
   const { data } = await storefront.query({
     query: productQuery,
     variables: {
       handle,
-      selectedOptions,
       country: locale.country,
       language: locale.language,
     },
