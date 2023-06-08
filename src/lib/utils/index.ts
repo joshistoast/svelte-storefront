@@ -46,16 +46,6 @@ export const useExcerpt = (text: string) => {
   return match?.length ? match[0] : ''
 }
 
-// export const DEFAULT_LOCALE = Object.freeze({
-//   ...countries['en-us'],
-//   pathPrefix: ''
-// })
-
-export const usePrefixPathWithLocale = (path: string) => {
-  const selectedLocale = page.subscribe((page) => page.params['locale']) ?? 'en-us'
-  return `${selectedLocale}/${path}`
-}
-
 /**
  * Shopify's 'Online Store' stores cart IDs in a 'cart' cookie.
  * By doing the same, merchants can switch from the Online Store to Hydrogen
