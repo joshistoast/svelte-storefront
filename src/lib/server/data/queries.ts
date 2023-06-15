@@ -265,7 +265,7 @@ export const UPDATE_CART_BUYER = gql`
     $country: CountryCode
     $language: LanguageCode
   ) @inContext (country: $country, language: $language) {
-    cartBuyerIdentityUpdate (cartId: $cartId, buyer: $buyer) {
+    cartBuyerIdentityUpdate (cartId: $cartId, buyerIdentity: $buyer) {
       cart {
         id
         buyerIdentity {

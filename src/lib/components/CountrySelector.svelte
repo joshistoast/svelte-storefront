@@ -1,13 +1,28 @@
 <script lang="ts">
 import { page } from '$app/stores'
+import { enhance } from '$app/forms'
 import type {
   Localizations,
   Locale,
+  CartBuyerIdentityInput,
 } from '$lib/types'
 import { onMount } from 'svelte'
+import { tick } from 'svelte'
 
 let selectedLocale: Locale
+let stagedLocale: Locale
+
 $: ({ selectedLocale } = $page.data)
+$: pathLocale = $page.params['locale'] ?? 'en-us'
+$: pathWithoutLocale = $page.url.pathname.replace(`/${pathLocale}`, '')
+$: pathWithStagedLocale = stagedLocale
+  ? `${toLocaleString(stagedLocale.language, stagedLocale.country)}${pathWithoutLocale}`
+  : undefined
+
+let stagedBuyerIdentity: string
+$: stagedBuyerIdentity = JSON.stringify({
+  countryCode: stagedLocale?.country || selectedLocale?.country
+})
 
 let selectWrapper: HTMLDivElement
 let countries: Localizations
@@ -37,17 +52,32 @@ const fetchCountries = async () => {
   const response = await fetch('/api/countries')
   return await response.json()
 }
+
+const selectLocale = async (e: Event) => {
+  const value = (e.target as HTMLSelectElement).value
+  stagedLocale = countries[value]
+  // submit the form
+  await tick()
+  selectWrapper.querySelector('form')?.submit()
+}
+const toLocaleString = (languageCode: string, countryCode: string) => {
+  if (!countryCode || !languageCode) return
+  return `${languageCode.toLowerCase()}-${countryCode.toLowerCase()}`
+}
 </script>
 
 <div bind:this={selectWrapper}>
-  everything here
   {#if countries}
-    <select>
-      {#each Object.entries(countries) as [ key, { label, language, country, currency }]}
-        <option value={country} selected={country === selectedLocale.country}>
-          {label}
-        </option>
-      {/each}
-    </select>
+    <form action="/cart?/UPDATE_BUYER_IDENTITY" method="POST" use:enhance>
+      <select on:change={selectLocale}>
+        {#each Object.entries(countries) as [ key, { label, language, country, currency }]}
+          <option value={toLocaleString(language, country)} selected={country === selectedLocale.country}>
+            {label}
+          </option>
+        {/each}
+      </select>
+      <input name="buyerIdentity" type="hidden" value={stagedBuyerIdentity} />
+      <input name="redirectTo" type="hidden" value={pathWithStagedLocale} />
+    </form>
   {/if}
 </div>
