@@ -280,3 +280,35 @@ export const UPDATE_CART_BUYER = gql`
     }
   }
 `
+
+export const POLICY_CONTENT_QUERY = gql`
+  fragment Policy on ShopPolicy {
+    body
+    handle
+    id
+    title
+    url
+  }
+  query policy_query(
+    $language: LanguageCode
+    $privacyPolicy: Boolean!
+    $shippingPolicy: Boolean!
+    $termsOfService: Boolean!
+    $refundPolicy: Boolean!
+  ) @inContext(language: $language) {
+    shop {
+      privacyPolicy @include(if: $privacyPolicy) {
+        ...Policy
+      }
+      shippingPolicy @include(if: $shippingPolicy) {
+        ...Policy
+      }
+      termsOfService @include(if: $termsOfService) {
+        ...Policy
+      }
+      refundPolicy @include(if: $refundPolicy) {
+        ...Policy
+      }
+    }
+  }
+`
