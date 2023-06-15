@@ -2,6 +2,7 @@
 import type { Product, ProductVariant, CartLineInput } from '$lib/types'
 import ProductOptions from '$lib/components/Product/Options.svelte'
 import AddToCartButton from '$lib/components/AddToCartButton.svelte'
+import Money from '$lib/components/Money.svelte'
 
 export let product: Product
 export let selectedVariant: ProductVariant | undefined = undefined
@@ -11,6 +12,9 @@ $: cartLines = selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity:
 </script>
 
 <h1>{product.title}</h1>
+{#if selectedVariant}
+  <Money money={selectedVariant.price} />
+{/if}
 
 <ProductOptions
   options={product.options}

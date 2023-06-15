@@ -3,7 +3,7 @@ import { layoutQuery, CART_QUERY } from '$lib/server/data'
 import invariant from 'tiny-invariant'
 import { getCartId } from '$lib/utils'
 
-export const load: LayoutServerLoad = async ({ locals, params, request, url }) => {
+export const load: LayoutServerLoad = async ({ locals, request }) => {
   const { storefront, locale } = locals
   const cartId = getCartId(request)
 

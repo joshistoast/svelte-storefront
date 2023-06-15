@@ -2,6 +2,7 @@
 import type { PageData } from './$types'
 import { page } from '$app/stores'
 import { goto } from '$app/navigation'
+import LocaleLink from '$lib/components/LocaleLink.svelte'
 
 export let data: PageData
 
@@ -15,10 +16,6 @@ $: {
     ...collection,
     products: {
       ...collection.products,
-      // nodes: [
-      //   ...collection.products.nodes,
-      //   ...data.collection.products.nodes,
-      // ],
       nodes: urlCursor
         ? [...collection.products.nodes, ...data.collection.products.nodes]
         : data.collection.products.nodes,
@@ -41,9 +38,9 @@ const loadMore = async () => {
 
 <div class="grid grid-cols-6 gap-4">
   {#each collection.products.nodes as product}
-    <a href="/products/{product.handle}" class="col-span-1 bg-gray-100">
+    <LocaleLink href="/products/{product.handle}" class="bg-gray-100">
       {product.title}
-    </a>
+    </LocaleLink>
   {/each}
 </div>
 

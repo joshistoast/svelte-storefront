@@ -97,7 +97,6 @@ export const productQuery = gql`
     $country: CountryCode
     $language: LanguageCode
     $handle: String!
-    $selectedOptions: [SelectedOptionInput!]!
   ) @inContext (country: $country, language: $language) {
     product(handle: $handle) {
       id
@@ -108,9 +107,6 @@ export const productQuery = gql`
       options {
         name
         values
-      }
-      selectedVariant: variantBySelectedOptions (selectedOptions: $selectedOptions) {
-        ...ProductVariantFragment
       }
       media (first: 10) {
         nodes {
@@ -151,7 +147,11 @@ export const recommendedProductsQuery = gql`
 
 export const CART_QUERY = gql`
   ${CART_FRAGMENT}
-  query CartQuery ($cartId: ID!, $country: CountryCode, $language: LanguageCode) @inContext (country: $country, language: $language) {
+  query CartQuery (
+    $cartId: ID!,
+    $country: CountryCode,
+    $language: LanguageCode
+  ) @inContext (country: $country, language: $language) {
     cart (id: $cartId) {
       ...CartFragment
     }
@@ -265,7 +265,7 @@ export const UPDATE_CART_BUYER = gql`
     $country: CountryCode
     $language: LanguageCode
   ) @inContext (country: $country, language: $language) {
-    cartBuyerIdentityUpdate (cartId: $cartId, buyer: $buyer) {
+    cartBuyerIdentityUpdate (cartId: $cartId, buyerIdentity: $buyer) {
       cart {
         id
         buyerIdentity {

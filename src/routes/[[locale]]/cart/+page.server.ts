@@ -53,13 +53,17 @@ const cartRetrieve = async (cartId: string, storefront: Storefront, locale?: Loc
   return data
 }
 
-const cartCreate = async (input: CartInput, storefront: Storefront) => {
+const cartCreate = async (input: CartInput, storefront: Storefront, locale?: Locale) => {
   // create a cart
   const { data } = await storefront.mutate<{
     cartCreate: CartCreatePayload
   }>({
     mutation: CREATE_CART_MUTATION,
-    variables: { input },
+    variables: {
+      input,
+      country: locale?.country || undefined,
+      language: locale?.language || undefined,
+    },
   })
   invariant(data?.cartCreate, 'No cart returned from cartCreate mutation')
   return data.cartCreate
@@ -116,7 +120,7 @@ const cartUpdateBuyerIdentity = async (cartId: string, buyerIdentity: CartBuyerI
     cartBuyerIdentityUpdate: CartBuyerIdentityUpdatePayload
   }>({
     mutation: UPDATE_CART_BUYER,
-    variables: { cartId, buyerIdentity },
+    variables: { cartId, buyer: buyerIdentity },
   })
   invariant(
     data?.cartBuyerIdentityUpdate,
@@ -135,11 +139,9 @@ export const load: PageServerLoad = async ({ request, locals }) => {
   } = {}
 
   const cartId = getCartId(request)
-
-  if (!cartId)
-    result = { cart: undefined, errors: undefined }
-  else
-    result = await cartRetrieve(cartId, storefront, locale)
+  !cartId
+    ? result = { cart: undefined, errors: undefined }
+    : result = await cartRetrieve(cartId, storefront, locale)
 
   const { cart, errors } = result
   return {
@@ -157,7 +159,7 @@ enum CartAction {
 }
 const handleCartAction = async (event: RequestEvent, action: CartAction) => {
   const { request, locals, cookies } = event
-  const { storefront } = locals
+  const { storefront, locale } = locals
   const formData = await request.formData()
   const countryCode = formData.get('countryCode') ? formData.get('countryCode') as CartBuyerIdentityInput['countryCode'] : undefined
 
@@ -181,7 +183,7 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
         result = await cartCreate({
           lines,
           buyerIdentity: countryCode ? { countryCode } : undefined,
-        }, locals.storefront)
+        }, locals.storefront, locale)
       else
         result = await cartAdd(cartId, lines, storefront)
 
@@ -229,18 +231,28 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
       break
     }
     case CartAction.UPDATE_BUYER_IDENTITY: {
-      invariant(cartId, 'No cart id')
-
       const buyerIdentity = formData.get('buyerIdentity')
         ? (JSON.parse(
           String(formData.get('buyerIdentity')),
         ) as CartBuyerIdentityInput)
         : ({} as CartBuyerIdentityInput)
 
+      invariant({
+        buyerIdentity: {
+          ...buyerIdentity,
+          customerAccessToken: undefined, // TODO
+        }
+      }, 'No buyer identity')
+
       result = cartId
         ? await cartUpdateBuyerIdentity(cartId, buyerIdentity, storefront)
-        : await cartCreate({ buyerIdentity }, storefront)
-
+        : await cartCreate(
+          {
+            buyerIdentity: {
+              ...buyerIdentity,
+              customerAccessToken: undefined, // TODO
+            }
+          }, storefront)
       cartId = result.cart?.id ?? cartId
 
       break

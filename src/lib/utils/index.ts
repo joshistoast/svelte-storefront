@@ -1,7 +1,6 @@
-import type { MenuItem, MoneyV2 } from '$lib/types'
+import type { CurrencyCode, MoneyV2 } from '$lib/types'
 import { readable } from 'svelte/store'
 import { page } from '$app/stores'
-import { countries } from '$lib/server/data'
 
 export const useTimeAgo = (a: Date, b: Date) => {
   const msDiff = b.getTime() - a.getTime()
@@ -47,16 +46,6 @@ export const useExcerpt = (text: string) => {
   return match?.length ? match[0] : ''
 }
 
-export const DEFAULT_LOCALE = Object.freeze({
-  ...countries['en-us'],
-  pathPrefix: ''
-})
-
-export const usePrefixPathWithLocale = (path: string) => {
-  const selectedLocale = page.subscribe((page) => page.params['locale']) ?? DEFAULT_LOCALE
-  return `${selectedLocale}/${path}`
-}
-
 /**
  * Shopify's 'Online Store' stores cart IDs in a 'cart' cookie.
  * By doing the same, merchants can switch from the Online Store to Hydrogen
@@ -97,4 +86,148 @@ export const isDiscounted = (price: MoneyV2, compareAtPrice: MoneyV2) => {
   if (compareAtPrice?.amount > price?.amount)
     return true
   return false
+}
+
+export type UseMoneyValue = {
+  /**
+   * The currency code from the `MoneyV2` object.
+   */
+  currencyCode: CurrencyCode;
+  /**
+   * The name for the currency code, returned by `Intl.NumberFormat`.
+   */
+  currencyName?: string;
+  /**
+   * The currency symbol returned by `Intl.NumberFormat`.
+   */
+  currencySymbol?: string;
+  /**
+   * The currency narrow symbol returned by `Intl.NumberFormat`.
+   */
+  currencyNarrowSymbol?: string;
+  /**
+   * The localized amount, without any currency symbols or non-number types from the `Intl.NumberFormat.formatToParts` parts.
+   */
+  amount: string;
+  /**
+   * All parts returned by `Intl.NumberFormat.formatToParts`.
+   */
+  parts: Intl.NumberFormatPart[];
+  /**
+   * A string returned by `new Intl.NumberFormat` for the amount and currency code,
+   * using the `locale` value in the [`LocalizationProvider` component](https://shopify.dev/api/hydrogen/components/localization/localizationprovider).
+   */
+  localizedString: string;
+  /**
+   * The `MoneyV2` object provided as an argument to the hook.
+   */
+  original: MoneyV2;
+  /**
+   * A string with trailing zeros removed from the fractional part, if any exist. If there are no trailing zeros, then the fractional part remains.
+   * For example, `$640.00` turns into `$640`.
+   * `$640.42` remains `$640.42`.
+   */
+  withoutTrailingZeros: string;
+  /**
+   * A string without currency and without trailing zeros removed from the fractional part, if any exist. If there are no trailing zeros, then the fractional part remains.
+   * For example, `$640.00` turns into `640`.
+   * `$640.42` turns into `640.42`.
+   */
+  withoutTrailingZerosAndCurrency: string;
+}
+
+export const useLazyFormatter = (
+  locale: string,
+  options?: Intl.NumberFormatOptions
+): () => Intl.NumberFormat => {
+  return () => new Intl.NumberFormat(locale, options)
+}
+
+export const useMoney = (
+  locale: string,
+  money: MoneyV2,
+): UseMoneyValue => {
+  const amount = parseFloat(money.amount)
+  const options = {
+    style: 'currency',
+    currency: money.currencyCode,
+  }
+  const withoutTrailingZerosOptions = {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }
+
+  const defaultFormatter = useLazyFormatter(locale, options)
+
+  const nameFormatter = useLazyFormatter(locale, {
+    ...options,
+    currencyDisplay: 'name',
+  })
+
+  const narrowSymbolFormatter = useLazyFormatter(locale, {
+    ...options,
+    currencyDisplay: 'narrowSymbol',
+  })
+
+  const withoutTrailingZerosFormatter = useLazyFormatter(locale, {
+    ...options,
+    ...withoutTrailingZerosOptions,
+  })
+
+  const withoutCurrencyFormatter = useLazyFormatter(locale)
+
+  const withoutTrailingZerosOrCurrencyFormatter = useLazyFormatter(locale, {
+    ...withoutTrailingZerosOptions,
+  })
+
+  const isPartCurrency = (part: Intl.NumberFormatPart) => part.type === 'currency'
+
+  const lazyFormatters = ({
+    original: () => money,
+    currencyCode: () => money.currencyCode,
+    localizedString: () => defaultFormatter().format(amount),
+
+    parts: () => defaultFormatter().formatToParts(amount),
+
+    withoutTrailingZeroes: () =>
+      amount % 1 === 0
+        ? withoutTrailingZerosFormatter().format(amount)
+        : defaultFormatter().format(amount),
+
+    withoutTrailingZeroesAndCurrency: () =>
+      amount % 1 === 0
+        ? withoutTrailingZerosOrCurrencyFormatter().format(amount)
+        : withoutCurrencyFormatter().format(amount),
+
+    currencyName: () =>
+      nameFormatter().formatToParts(amount).find(isPartCurrency)?.value ??
+      money.currencyCode, // e.g. "US dollars"
+
+    currencySymbol: () =>
+      defaultFormatter().formatToParts(amount).find(isPartCurrency)?.value ??
+      money.currencyCode, // e.g. "USD"
+
+    currencyNarrowSymbol: () =>
+      narrowSymbolFormatter().formatToParts(amount).find(isPartCurrency)
+        ?.value ?? '', // e.g. "$"
+
+    amount: () =>
+      defaultFormatter()
+        .formatToParts(amount)
+        .filter((part) =>
+          ['decimal', 'fraction', 'group', 'integer', 'literal'].includes(
+            part.type
+          )
+        )
+        .map((part) => part.value)
+        .join(''),
+  })
+
+  // Call functions automatically when the properties are accessed
+  // to keep these functions as an implementation detail
+  return new Proxy(lazyFormatters as any as UseMoneyValue, {
+    get: (target, key) => {
+      return Reflect.get(target, key)?.call(null)
+    }
+  })
 }
