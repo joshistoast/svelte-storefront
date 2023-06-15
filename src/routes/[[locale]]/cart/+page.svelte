@@ -39,7 +39,7 @@ const handleCartAction = async (event: Event, action: CartAction) => {
   {/each}
 {/if}
 
-{#if !cart || cart?.lines?.edges.length === 0}
+{#if !cart}
   <p>Cart is empty</p>
 {:else}
   {#each cart?.lines?.edges.map((e) => e.node) as line}
