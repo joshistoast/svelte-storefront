@@ -2,6 +2,12 @@
 
 This is my attempt to svelte-ify Shopify's Hydrogen storefront features. It's a work in progress, but I'm hoping to get it to a point where it's a good boilerplate/template for building a custom Shopify storefront with little hassle and built their favorite js framework (sveltekit).
 
+## To Do
+
+- [ ] Customer Auth and Account Management
+- [ ] Product Search
+- [ ] Collection Filtering
+
 ## Getting Started
 
 1. Clone the repo
