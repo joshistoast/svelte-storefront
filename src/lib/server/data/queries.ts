@@ -281,6 +281,36 @@ export const UPDATE_CART_BUYER = gql`
   }
 `
 
+export const POLICIES_QUERY = gql`
+  fragment PolicyIndex on ShopPolicy {
+    id
+    title
+    handle
+  }
+
+  query PoliciesIndex {
+    shop {
+      privacyPolicy {
+        ...PolicyIndex
+      }
+      shippingPolicy {
+        ...PolicyIndex
+      }
+      termsOfService {
+        ...PolicyIndex
+      }
+      refundPolicy {
+        ...PolicyIndex
+      }
+      subscriptionPolicy {
+        id
+        title
+        handle
+      }
+    }
+  }
+`
+
 export const POLICY_CONTENT_QUERY = gql`
   fragment Policy on ShopPolicy {
     body
