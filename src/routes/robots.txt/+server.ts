@@ -1,6 +1,4 @@
-import { json } from '@sveltejs/kit'
-
-export const GET = async (request: Request): Promise<Response> => {
+export const GET = async (): Promise<Response> => {
   const sitemapUrl = undefined // TODO: this
 
   const robots = `
