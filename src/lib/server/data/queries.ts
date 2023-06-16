@@ -281,6 +281,36 @@ export const UPDATE_CART_BUYER = gql`
   }
 `
 
+export const POLICIES_QUERY = gql`
+  fragment PolicyIndex on ShopPolicy {
+    id
+    title
+    handle
+  }
+
+  query PoliciesIndex {
+    shop {
+      privacyPolicy {
+        ...PolicyIndex
+      }
+      shippingPolicy {
+        ...PolicyIndex
+      }
+      termsOfService {
+        ...PolicyIndex
+      }
+      refundPolicy {
+        ...PolicyIndex
+      }
+      subscriptionPolicy {
+        id
+        title
+        handle
+      }
+    }
+  }
+`
+
 export const POLICY_CONTENT_QUERY = gql`
   fragment Policy on ShopPolicy {
     body
@@ -346,6 +376,94 @@ export const SITEMAP_QUERY = gql`
         updatedAt
         handle
         onlineStoreUrl
+      }
+    }
+  }
+`
+
+export const ARTICLE_QUERY = gql`
+  query ArticleDetails(
+    $language: LanguageCode
+    $blogHandle: String!
+    $articleHandle: String!
+  ) @inContext(language: $language) {
+    blog(handle: $blogHandle) {
+      articleByHandle(handle: $articleHandle) {
+        title
+        contentHtml
+        publishedAt
+        author: authorV2 {
+          name
+        }
+        image {
+          id
+          altText
+          url
+          width
+          height
+        }
+        seo {
+          description
+          title
+        }
+      }
+    }
+  }
+`
+
+export const BLOGS_QUERY = gql`
+  query Blog(
+    $language: LanguageCode
+    $blogHandle: String!
+    $pageBy: Int!
+    $cursor: String
+  ) @inContext(language: $language) {
+    blog(handle: $blogHandle) {
+      title
+      seo {
+        title
+        description
+      }
+      handle
+      articles(first: $pageBy, after: $cursor) {
+        edges {
+          node {
+            ...Article
+          }
+        }
+      }
+    }
+  }
+
+  fragment Article on Article {
+    author: authorV2 {
+      name
+    }
+    contentHtml
+    handle
+    id
+    image {
+      id
+      altText
+      url
+      width
+      height
+    }
+    publishedAt
+    title
+  }
+`
+
+export const PAGE_QUERY = gql`
+  query PageDetails($language: LanguageCode, $handle: String!)
+  @inContext(language: $language) {
+    page(handle: $handle) {
+      id
+      title
+      body
+      seo {
+        description
+        title
       }
     }
   }

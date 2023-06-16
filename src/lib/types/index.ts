@@ -16,3 +16,7 @@ export enum CartAction {
   UPDATE_DISCOUNT = 'UPDATE_DISCOUNT',
   UPDATE_BUYER_IDENTITY = 'UPDATE_BUYER_IDENTITY',
 }
+
+export type NonNullableFields<T> = {
+  [P in keyof T]: NonNullable<T[P]>;
+}
