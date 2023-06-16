@@ -64,13 +64,20 @@ export const GET = (async ({ locals, request }) => {
   }
 
   const renderUrlTag = (
-    url: string,
-    lastMod?: string,
-    changeFreq?: string,
-    image?: {
+    {
+      url,
+      lastMod,
+      changeFreq,
+      image,
+    }: {
       url: string
-      title?: string
-      caption?: string
+      lastMod?: string
+      changeFreq?: string
+      image?: {
+        url: string
+        title?: string
+        caption?: string
+      }
     }
   ) => {
     return `
@@ -149,7 +156,7 @@ export const GET = (async ({ locals, request }) => {
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
       >
-        ${urlsDatas.map((url) => renderUrlTag(url.url, url.lastMod, url.changeFreq, url.image)).join('')}
+        ${urlsDatas.map((data) => renderUrlTag(data)).join('')}
       </urlset>
     `
   }
