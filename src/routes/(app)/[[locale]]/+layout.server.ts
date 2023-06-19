@@ -12,8 +12,8 @@ export const load: LayoutServerLoad = async ({ locals, request }) => {
       query: layoutQuery,
       variables: {
         language: locale.language,
-        headerMenuHandle: 'main',
-        footerMenuHandle: 'foot',
+        headerMenuHandle: 'main-menu',
+        footerMenuHandle: 'footer',
       }
     })
     invariant(data, 'No data returned from Shopify API')
