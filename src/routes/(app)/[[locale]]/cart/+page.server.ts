@@ -147,6 +147,9 @@ export const load: PageServerLoad = async ({ request, locals }) => {
   return {
     cart,
     errors,
+    seo: {
+      title: cart?.totalQuantity ? `Cart (${cart.totalQuantity})` : 'Cart',
+    },
   }
 }
 

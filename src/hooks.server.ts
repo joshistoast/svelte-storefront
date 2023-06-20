@@ -2,6 +2,8 @@ import type { Handle, RequestEvent } from '@sveltejs/kit'
 import { shopify as storefront, countries } from '$lib/server/data'
 import { redirect } from '@sveltejs/kit'
 import type { Locale } from '$lib/types'
+import { handleSession } from 'svelte-kit-cookie-session'
+import { env } from '$env/dynamic/private'
 
 const getLocale = (event: RequestEvent<Partial<Record<string, string>>>): Locale => {
   const { locale } = event.params
@@ -21,7 +23,9 @@ const getLocale = (event: RequestEvent<Partial<Record<string, string>>>): Locale
   return selectedLocale
 }
 
-export const handle: Handle = (async ({ event, resolve }) => {
+export const handle: Handle = handleSession({
+  secret: env.SESSION_SECRET,
+}, async ({ event, resolve }) => {
   const locale = getLocale(event)
 
   event.locals.storefront = storefront

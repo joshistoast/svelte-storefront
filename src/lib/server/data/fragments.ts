@@ -323,3 +323,32 @@ export const USER_ERROR_FRAGMENT = gql`
     code
   }
 `
+
+export const ORDER_CARD_FRAGMENT = gql`
+  fragment OrderCard on Order {
+    id
+    orderNumber
+    processedAt
+    financialStatus
+    fulfillmentStatus
+    currentTotalPrice {
+      amount
+      currencyCode
+    }
+    lineItems(first: 2) {
+      edges {
+        node {
+          variant {
+            image {
+              url
+              altText
+              height
+              width
+            }
+          }
+          title
+        }
+      }
+    }
+  }
+`

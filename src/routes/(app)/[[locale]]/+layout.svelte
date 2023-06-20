@@ -22,7 +22,10 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
       {/each}
     </nav>
   </div>
-  <LocaleLink href="/cart">Cart - {cart?.totalQuantity ?? 0}</LocaleLink>
+  <div class="flex items-center gap-2">
+    <LocaleLink href="/account">Account</LocaleLink>
+    <LocaleLink href="/cart">Cart - {cart?.totalQuantity ?? 0}</LocaleLink>
+  </div>
 </header>
 
 <main class="flex-1">
