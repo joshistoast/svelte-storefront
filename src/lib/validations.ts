@@ -8,3 +8,13 @@ export const loginSchema = z.object({
 export const registerSchema = z.object({
   ...loginSchema.shape,
 })
+
+export const passwordSetSchema = z
+  .object({
+    password: z.string().min(8),
+    confirmPassword: z.string().min(8),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })

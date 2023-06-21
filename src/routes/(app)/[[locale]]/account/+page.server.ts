@@ -12,7 +12,11 @@ import type {
   CustomerAccessTokenCreatePayload,
   CustomerCreatePayload,
 } from '$lib/types'
-import { loginSchema, registerSchema } from '$lib/validations'
+import {
+  loginSchema,
+  registerSchema,
+  passwordSetSchema,
+} from '$lib/validations'
 
 const getCustomer = async (locals: App.Locals) => {
   const { storefront, session, locale } = locals
@@ -100,12 +104,6 @@ export const actions: Actions = {
     // return form
     return { form }
   },
-  logout: async ({ locals }) => {
-    const { session } = locals
-    await session.set({ 'customerAccessToken': null })
-    const redirectPath = useLocaleKey(locals.locale) ? `/${useLocaleKey(locals.locale) }` : ''
-    throw redirect(302, redirectPath)
-  },
   register: async ({ locals, request }) => {
     const { storefront, session } = locals
     const form = await superValidate(request, registerSchema)
@@ -142,7 +140,12 @@ export const actions: Actions = {
 
     return { form }
   },
+  logout: async ({ locals }) => {
+    const { session } = locals
+    await session.set({ 'customerAccessToken': null })
+    const redirectPath = useLocaleKey(locals.locale) ? `/${useLocaleKey(locals.locale)}` : ''
+    throw redirect(302, redirectPath)
+  },
   edit: async ({ locals, request }) => {}, // TODO
   recover: async ({ locals, request }) => {}, // TODO
-  activate: async ({ locals, request }) => {}, // TODO
 }
