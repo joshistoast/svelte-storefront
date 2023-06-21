@@ -553,3 +553,19 @@ export const CUSTOMER_CREATE_MUTATION = gql`
     }
   }
 `
+
+export const CUSTOMER_ACTIVATE_MUTATION = gql`
+  mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
+    customerActivate(id: $id, input: $input) {
+      customerAccessToken {
+        accessToken
+        expiresAt
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`
