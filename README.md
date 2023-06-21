@@ -4,7 +4,6 @@ This is my attempt to svelte-ify Shopify's Hydrogen storefront features. It's a 
 
 ## To Do
 
-- [ ] Customer Auth and Account Management
 - [ ] Product Search
 - [ ] Collection Filtering
 

@@ -3,7 +3,6 @@ import type { PageServerData } from './$types'
 import { superForm } from 'sveltekit-superforms/client'
 
 export let data: PageServerData
-const { shop } = data.layout
 
 const {
   form,
@@ -15,11 +14,11 @@ const {
 </script>
 
 <div>
-  <h1>Login</h1>
+  <h1>Register</h1>
 
   <form
     method="POST"
-    action="/account?/login"
+    action="/account?/register"
     use:enhance
     class="flex flex-col max-w-md gap-2"
   >
@@ -54,10 +53,10 @@ const {
     {#if $errors.password}<span class="invalid">{$errors.password}</span>{/if}
 
     <button type="submit" class="bg-gray-100 hover:bg-gray-200">
-      Log{#if $submitting}ging{/if} in
+      Creat{#if $submitting}ting{:else}e {/if} account
     </button>
 
-    <p>New to {shop.name}? <a href="/account/register">Register</a></p>
+    <p>Already have an account? <a href="/account/login">Log in</a></p>
   </form>
 </div>
 

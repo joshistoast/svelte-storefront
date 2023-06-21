@@ -538,3 +538,18 @@ export const CUSTOMER_QUERY = gql`
     }
   }
 `
+
+export const CUSTOMER_CREATE_MUTATION = gql`
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`

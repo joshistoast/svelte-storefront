@@ -1,15 +1,18 @@
 import type { PageServerLoad, Actions } from './$types'
-import { fail, redirect } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
 import { useLocaleKey } from '$lib/utils'
-import { LOGIN_MUTATION, CUSTOMER_QUERY } from '$lib/server/data'
+import {
+  LOGIN_MUTATION,
+  CUSTOMER_QUERY,
+  CUSTOMER_CREATE_MUTATION,
+} from '$lib/server/data'
 import { setError, superValidate } from 'sveltekit-superforms/server'
-import { z } from 'zod'
-import type { Customer, CustomerAccessTokenCreatePayload } from '$lib/types'
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
+import type {
+  Customer,
+  CustomerAccessTokenCreatePayload,
+  CustomerCreatePayload,
+} from '$lib/types'
+import { loginSchema, registerSchema } from '$lib/validations'
 
 const getCustomer = async (locals: App.Locals) => {
   const { storefront, session, locale } = locals
@@ -27,6 +30,24 @@ const getCustomer = async (locals: App.Locals) => {
   })
 
   return data?.customer
+}
+
+const doLogin = async (locals: App.Locals, email: string, password: string) => {
+  const { storefront, session } = locals
+
+  const { data } = await storefront.mutate<{
+    customerAccessTokenCreate: CustomerAccessTokenCreatePayload
+  }>({
+    mutation: LOGIN_MUTATION,
+    variables: {
+      input: { email, password },
+    },
+  })
+  if (data?.customerAccessTokenCreate?.customerAccessToken?.accessToken) {
+    return data.customerAccessTokenCreate.customerAccessToken.accessToken
+  }
+
+  throw error(400, JSON.stringify(data?.customerAccessTokenCreate?.customerUserErrors))
 }
 
 export const load: PageServerLoad = async ({ locals, setHeaders }) => {
@@ -57,43 +78,23 @@ export const load: PageServerLoad = async ({ locals, setHeaders }) => {
 
 export const actions: Actions = {
   login: async ({ locals, request }) => {
-    const { storefront, session } = locals
-
-    // validate form
+    const { session } = locals
     const form = await superValidate(request, loginSchema)
-    if (!form.valid)
-      return fail(400, { form })
-    const { email, password } = form.data
 
-    // perform login
-    const { data } = await storefront.mutate<{
-      customerAccessTokenCreate: CustomerAccessTokenCreatePayload
-    }>({
-      mutation: LOGIN_MUTATION,
-      variables: {
-        input: { email, password },
-      },
-    })
+    try {
+      // validate form
+      if (!form.valid)
+        return fail(400, { form })
+      const { email, password } = form.data
 
-    // set session or fail
-    if (data?.customerAccessTokenCreate?.customerAccessToken?.accessToken) {
-      await session.set({ 'customerAccessToken': data.customerAccessTokenCreate.customerAccessToken.accessToken })
-    } else {
-      data?.customerAccessTokenCreate?.customerUserErrors?.forEach(({ message }) => {
-        let field: 'email' | 'password' = 'email'
-        let stagedMessage = message
-
-        switch (message) {
-          case 'Unidentified customer':
-            stagedMessage = 'Invalid email or password'
-            field = 'password'
-            break
-          default:
-            break
-        }
-
-        setError(form, field, stagedMessage)
-      })
+      // perform login
+      const customerAccessToken = await doLogin(locals, email, password)
+      await session.set({ 'customerAccessToken': customerAccessToken })
+    } catch (err) {
+      if (err instanceof Error)
+        setError(form, 'password', 'Something went wrong, please try again later.')
+      else
+        setError(form, 'password', 'Invalid email or password.')
     }
 
     // return form
@@ -105,7 +106,42 @@ export const actions: Actions = {
     const redirectPath = useLocaleKey(locals.locale) ? `/${useLocaleKey(locals.locale) }` : ''
     throw redirect(302, redirectPath)
   },
-  register: async ({ locals, request }) => {}, // TODO
+  register: async ({ locals, request }) => {
+    const { storefront, session } = locals
+    const form = await superValidate(request, registerSchema)
+
+    try {
+      // validate form
+      if (!form.valid)
+        return fail(400, { form })
+      const { email, password } = form.data
+
+      // perform registration
+      const { data } = await storefront.mutate<{
+        customerCreate: CustomerCreatePayload
+      }>({
+        mutation: CUSTOMER_CREATE_MUTATION,
+        variables: {
+          input: { email, password },
+        },
+      })
+      if (!data?.customerCreate?.customer?.id)
+        throw error(400, JSON.stringify(data?.customerCreate?.customerUserErrors))
+
+      // Login new customer
+      const customerAccessToken = await doLogin(locals, email, password)
+      await session.set({ 'customerAccessToken': customerAccessToken })
+
+      throw redirect(302, useLocaleKey(locals.locale) + '/account')
+    } catch (err) {
+      if (err instanceof Error)
+        setError(form, 'password', 'Something went wrong, please try again later.')
+      else
+        setError(form, 'password', 'Sorry. We could not create an account with this email. User might already exist, try to login instead.')
+    }
+
+    return { form }
+  },
   edit: async ({ locals, request }) => {}, // TODO
   recover: async ({ locals, request }) => {}, // TODO
   activate: async ({ locals, request }) => {}, // TODO
