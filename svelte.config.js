@@ -10,7 +10,13 @@ const config = {
     alias: {
       $root: './src',
     },
-  }
+  },
+
+  vitePlugin: {
+    experimental: {
+      inspector: true,
+    }
+  },
 }
 
 export default config

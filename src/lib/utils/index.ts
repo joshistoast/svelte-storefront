@@ -1,4 +1,4 @@
-import type { CurrencyCode, MoneyV2 } from '$lib/types'
+import type { CurrencyCode, Locale, MoneyV2 } from '$lib/types'
 import { readable } from 'svelte/store'
 import { page } from '$app/stores'
 
@@ -230,4 +230,11 @@ export const useMoney = (
       return Reflect.get(target, key)?.call(null)
     }
   })
+}
+
+export const useLocaleKey = (locale: Locale) => {
+  if (locale.country === 'US')
+    return undefined
+
+  return `${locale.language.toLowerCase()}-${locale.country.toLowerCase()}`
 }

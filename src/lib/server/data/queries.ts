@@ -9,6 +9,7 @@ import {
   CART_FRAGMENT,
   LINES_CART_FRAGMENT,
   USER_ERROR_FRAGMENT,
+  ORDER_CARD_FRAGMENT,
 } from './fragments'
 
 export const layoutQuery = gql`
@@ -464,6 +465,90 @@ export const PAGE_QUERY = gql`
       seo {
         description
         title
+      }
+    }
+  }
+`
+
+export const LOGIN_MUTATION = gql`
+  mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+    customerAccessTokenCreate(input: $input) {
+      customerUserErrors {
+        code
+        field
+        message
+      }
+      customerAccessToken {
+        accessToken
+        expiresAt
+      }
+    }
+  }
+`
+
+export const CUSTOMER_QUERY = gql`
+  ${ORDER_CARD_FRAGMENT}
+
+  query CustomerDetails(
+    $customerAccessToken: String!
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    customer(customerAccessToken: $customerAccessToken) {
+      ...CustomerDetails
+    }
+  }
+
+  fragment AddressPartial on MailingAddress {
+    id
+    formatted
+    firstName
+    lastName
+    company
+    address1
+    address2
+    country
+    province
+    city
+    zip
+    phone
+  }
+
+  fragment CustomerDetails on Customer {
+    firstName
+    lastName
+    phone
+    email
+    defaultAddress {
+      ...AddressPartial
+    }
+    addresses(first: 6) {
+      edges {
+        node {
+          ...AddressPartial
+        }
+      }
+    }
+    orders(first: 250, sortKey: PROCESSED_AT, reverse: true) {
+      edges {
+        node {
+          ...OrderCard
+        }
+      }
+    }
+  }
+`
+
+export const CUSTOMER_CREATE_MUTATION = gql`
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer {
+        id
+      }
+      customerUserErrors {
+        code
+        field
+        message
       }
     }
   }
