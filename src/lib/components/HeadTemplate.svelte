@@ -11,6 +11,10 @@ $: robots = seo?.robots || 'index, follow'
 
 <svelte:head>
   <title>{title}</title>
+
+  <link rel="preconnect" href="https://cdn.shopify.com" />
+  <link rel="preconnect" href="https://shop.app" />
+
   <meta name="description" content={description} />
   <meta name="robots" content={robots} />
 
@@ -18,7 +22,4 @@ $: robots = seo?.robots || 'index, follow'
   <meta name="og:description" content={description} />
   <meta name="og:type" content="website" />
   <meta name="twitter:card" content="summary" />
-
-  <link rel="preconnect" href="https://cdn.shopify.com" />
-  <link rel="preconnect" href="https://shop.app" />
 </svelte:head>
