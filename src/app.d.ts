@@ -17,6 +17,7 @@ declare global {
       seo: {
         title: string
         description: string
+        [key: string]: string | undefined
       }
     }
     // interface Platform {}
