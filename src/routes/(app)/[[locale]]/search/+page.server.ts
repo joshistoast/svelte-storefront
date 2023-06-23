@@ -8,7 +8,9 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
   // Set up variables
   const searchTerm = url.searchParams.get('q')
+  const endCursor = url.searchParams.get('after')
   const variables = {
+    endCursor,
     first: searchTerm ? 8 : 0, // If there is a search term, show 8 products, otherwise show none
   }
 

@@ -1,17 +1,38 @@
 <script lang="ts">
 import type { PageServerData } from './$types'
 import { page } from '$app/stores'
-import { enhance } from '$app/forms'
-  import LocaleLink from '$root/lib/components/LocaleLink.svelte'
+import LocaleLink from '$root/lib/components/LocaleLink.svelte'
+import { goto } from '$app/navigation'
 
 export let data: PageServerData
+let { products } = data
+let loading = false
+
 $: ({
-  products,
   noResultRecommendations,
   searchTerm,
 } = data)
 $: noResults = products?.nodes?.length === 0
+$: ({ hasNextPage, endCursor } = data.products?.pageInfo || {})
 
+// handle loading more products
+const loadMore = async () => {
+  if (!endCursor || !hasNextPage) return
+  loading = true
+  const url = new URL($page.url.href)
+  url.searchParams.set('after', endCursor)
+  goto(url.href, {
+    replaceState: true,
+    noScroll: true,
+  })
+  products = {
+    ...products,
+    nodes: [...products.nodes, ...data.products.nodes],
+  }
+  loading = false
+}
+
+// search value is either the search term from the search input or the query param
 let searchValue = searchTerm || $page.url.searchParams.get('q') || ''
 </script>
 
@@ -19,7 +40,6 @@ let searchValue = searchTerm || $page.url.searchParams.get('q') || ''
 <div>
   <form
     method="GET"
-    use:enhance
   >
     <input
       type="text"
@@ -51,7 +71,7 @@ let searchValue = searchTerm || $page.url.searchParams.get('q') || ''
       <h2>Trending Products</h2>
       <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {#each noResultRecommendations.featuredProducts.nodes as product}
-          <LocaleLink href="/collections/{product.handle}">
+          <LocaleLink href="/products/{product.handle}">
             <div class="bg-gray-100">{product.title}</div>
           </LocaleLink>
         {/each}
@@ -60,10 +80,18 @@ let searchValue = searchTerm || $page.url.searchParams.get('q') || ''
   {:else}
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {#each products.nodes as product}
-        <LocaleLink href="/collections/{product.handle}">
+        <LocaleLink href="/products/{product.handle}">
           <div class="bg-gray-100">{product.title}</div>
         </LocaleLink>
       {/each}
     </div>
+    {#if hasNextPage}
+      <button
+        type="button"
+        on:click|preventDefault={loadMore}
+      >
+        Load{loading ? 'ing' : ''} More
+      </button>
+    {/if}
   {/if}
 </div>
