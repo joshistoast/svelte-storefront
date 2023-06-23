@@ -17,8 +17,6 @@ const {
 })
 </script>
 
-{JSON.stringify($form)}
-
 <form
   method="POST"
   class="flex flex-col max-w-md gap-2"
