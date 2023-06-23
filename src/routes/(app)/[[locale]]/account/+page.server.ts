@@ -5,17 +5,20 @@ import {
   LOGIN_MUTATION,
   CUSTOMER_QUERY,
   CUSTOMER_CREATE_MUTATION,
+  CUSTOMER_UPDATE_MUTATION,
 } from '$lib/server/data'
 import { setError, superValidate } from 'sveltekit-superforms/server'
 import type {
   Customer,
   CustomerAccessTokenCreatePayload,
   CustomerCreatePayload,
+  CustomerUpdateInput,
+  CustomerUpdatePayload,
 } from '$lib/types'
 import {
   loginSchema,
   registerSchema,
-  passwordSetSchema,
+  AccountEditSchema,
 } from '$lib/validations'
 
 const getCustomer = async (locals: App.Locals) => {
@@ -37,7 +40,7 @@ const getCustomer = async (locals: App.Locals) => {
 }
 
 const doLogin = async (locals: App.Locals, email: string, password: string) => {
-  const { storefront, session } = locals
+  const { storefront } = locals
 
   const { data } = await storefront.mutate<{
     customerAccessTokenCreate: CustomerAccessTokenCreatePayload
@@ -58,8 +61,7 @@ export const load: PageServerLoad = async ({ locals, setHeaders }) => {
   const { session, locale } = locals
   const { customerAccessToken } = session.data
 
-  const isAuthenticated = !!customerAccessToken
-  const customer = isAuthenticated ? await getCustomer(locals) : undefined
+  const customer = !!customerAccessToken ? await getCustomer(locals) : undefined
 
   // Redirect if not authenticated
   if (!customerAccessToken || !customer)
@@ -70,10 +72,7 @@ export const load: PageServerLoad = async ({ locals, setHeaders }) => {
 
   // Return as props
   return {
-    props: {
-      isAuthenticated,
-      customer,
-    },
+    customer,
     seo: {
       title: 'Account',
     },
@@ -146,6 +145,62 @@ export const actions: Actions = {
     const redirectPath = useLocaleKey(locals.locale) ? `/${useLocaleKey(locals.locale)}` : ''
     throw redirect(302, redirectPath)
   },
-  edit: async ({ locals, request }) => {}, // TODO
+  edit: async ({ locals, request }) => {
+    const { storefront, session, locale } = locals
+    const { customerAccessToken } = session.data
+
+    const form = await superValidate(request, AccountEditSchema)
+
+    try {
+      // validate session
+      if (!customerAccessToken)
+        throw error(400, 'You must be logged in to edit your account')
+
+      // validate form
+      if (!form.valid)
+        return fail(400, { form })
+
+      // construct new customer
+      const customer: CustomerUpdateInput = {
+        firstName: form.data.firstName,
+        lastName: form.data.lastName,
+        email: form.data.email,
+        phone: form.data.phone,
+        password: form.data.newPassword || form.data.currentPassword,
+      }
+
+      // perform update
+      const { data } = await storefront.mutate<{
+        customerUpdate: CustomerUpdatePayload
+      }>({
+        mutation: CUSTOMER_UPDATE_MUTATION,
+        variables: {
+          customerAccessToken,
+          customer,
+        },
+      })
+      console.log('data', data)
+
+      // update form with api errors
+      if (!data?.customerUpdate?.customer?.id) {
+        data?.customerUpdate?.customerUserErrors?.forEach((error) => {
+          setError(form, 'confirmPassword', error.message)
+        })
+      }
+
+      // update session
+      if (data?.customerUpdate.customerAccessToken?.accessToken) {
+        await session.set({ 'customerAccessToken': data?.customerUpdate.customerAccessToken?.accessToken })
+        throw redirect(302, `/${useLocaleKey(locale) ?? ''}/account`)
+      }
+
+      return { form }
+    } catch (err) {
+      if (err instanceof Error)
+        setError(form, 'currentPassword', 'Something went wrong, please try again later.')
+      else
+        setError(form, 'email', 'Invalid email or password.')
+    }
+  },
   recover: async ({ locals, request }) => {}, // TODO
 }

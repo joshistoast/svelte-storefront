@@ -5,7 +5,7 @@ import AccountDetails from '$lib/components/AccountDetails.svelte'
 import AccountOrderHistory from '$lib/components/AccountOrderHistory.svelte'
 
 export let data: PageServerData
-const { customer } = data.props
+const { customer } = data
 const orders = customer.orders.edges.map((edge) => edge.node)
 
 const heading = customer ?

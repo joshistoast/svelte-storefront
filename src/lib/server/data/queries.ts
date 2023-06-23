@@ -10,6 +10,7 @@ import {
   LINES_CART_FRAGMENT,
   USER_ERROR_FRAGMENT,
   ORDER_CARD_FRAGMENT,
+  FEATURED_COLLECTION_FRAGMENT,
 } from './fragments'
 
 export const layoutQuery = gql`
@@ -125,6 +126,61 @@ export const productQuery = gql`
       }
     }
   }
+`
+
+export const SEARCH_QUERY = gql`
+  ${PRODUCT_CARD_FRAGMENT}
+
+  query PaginatedProductsSearch(
+    $country: CountryCode
+    $endCursor: String
+    $first: Int
+    $language: LanguageCode
+    $last: Int
+    $searchTerm: String
+    $startCursor: String
+  ) @inContext(country: $country, language: $language) {
+    products(
+      first: $first,
+      last: $last,
+      before: $startCursor,
+      after: $endCursor,
+      sortKey: RELEVANCE,
+      query: $searchTerm
+    ) {
+      nodes {
+        ...ProductCard
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`
+
+export const FEATURED_ITEMS_QUERY = gql`
+  query FeaturedItems(
+    $country: CountryCode
+    $language: LanguageCode
+    $pageBy: Int = 12
+  ) @inContext(country: $country, language: $language) {
+    featuredCollections: collections(first: 3, sortKey: UPDATED_AT) {
+      nodes {
+        ...FeaturedCollectionDetails
+      }
+    }
+    featuredProducts: products(first: $pageBy) {
+      nodes {
+        ...ProductCard
+      }
+    }
+  }
+
+  ${PRODUCT_CARD_FRAGMENT}
+  ${FEATURED_COLLECTION_FRAGMENT}
 `
 
 export const recommendedProductsQuery = gql`
@@ -557,6 +613,29 @@ export const CUSTOMER_CREATE_MUTATION = gql`
 export const CUSTOMER_ACTIVATE_MUTATION = gql`
   mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
     customerActivate(id: $id, input: $input) {
+      customerAccessToken {
+        accessToken
+        expiresAt
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CUSTOMER_UPDATE_MUTATION = gql`
+  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+      customer {
+        id
+        firstName
+        lastName
+        email
+        phone
+      }
       customerAccessToken {
         accessToken
         expiresAt

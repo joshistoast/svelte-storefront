@@ -23,6 +23,7 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
     </nav>
   </div>
   <div class="flex items-center gap-2">
+    <LocaleLink href="/search">Search</LocaleLink>
     <LocaleLink href="/account">Account</LocaleLink>
     <LocaleLink href="/cart">Cart - {cart?.totalQuantity ?? 0}</LocaleLink>
   </div>

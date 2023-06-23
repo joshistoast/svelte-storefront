@@ -13,10 +13,11 @@ declare global {
       session: Session
     }
     interface PageData {
-      session: Session
-      seo: {
+      session?: Session
+      seo?: {
         title: string
         description: string
+        [key: string]: string | undefined
       }
     }
     // interface Platform {}

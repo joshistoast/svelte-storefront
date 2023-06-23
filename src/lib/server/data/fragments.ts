@@ -352,3 +352,17 @@ export const ORDER_CARD_FRAGMENT = gql`
     }
   }
 `
+
+export const FEATURED_COLLECTION_FRAGMENT = gql`
+  fragment FeaturedCollectionDetails on Collection {
+    id
+    title
+    handle
+    image {
+      altText
+      width
+      height
+      url
+    }
+  }
+`
