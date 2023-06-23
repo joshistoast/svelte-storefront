@@ -569,3 +569,26 @@ export const CUSTOMER_ACTIVATE_MUTATION = gql`
     }
   }
 `
+
+export const CUSTOMER_UPDATE_MUTATION = gql`
+  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+      customer {
+        id
+        firstName
+        lastName
+        email
+        phone
+      }
+      customerAccessToken {
+        accessToken
+        expiresAt
+      }
+      customerUserErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`
