@@ -11,6 +11,8 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
 </script>
 <HeadTemplate />
 
+{shop.primaryDomain.url}
+
 <header class="flex flex-col justify-between p-1 bg-gray-100 lg:flex-row lg:items-center lg:gap-5">
   <div class="flex flex-col lg:flex-row lg:items-center lg:gap-5">
     <a href="/">
@@ -23,6 +25,7 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
     </nav>
   </div>
   <div class="flex items-center gap-2">
+    <LocaleLink href="/search">Search</LocaleLink>
     <LocaleLink href="/account">Account</LocaleLink>
     <LocaleLink href="/cart">Cart - {cart?.totalQuantity ?? 0}</LocaleLink>
   </div>
