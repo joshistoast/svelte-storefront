@@ -61,8 +61,7 @@ export const load: PageServerLoad = async ({ locals, setHeaders }) => {
   const { session, locale } = locals
   const { customerAccessToken } = session.data
 
-  const isAuthenticated = !!customerAccessToken
-  const customer = isAuthenticated ? await getCustomer(locals) : undefined
+  const customer = !!customerAccessToken ? await getCustomer(locals) : undefined
 
   // Redirect if not authenticated
   if (!customerAccessToken || !customer)
@@ -73,10 +72,7 @@ export const load: PageServerLoad = async ({ locals, setHeaders }) => {
 
   // Return as props
   return {
-    props: {
-      isAuthenticated,
-      customer,
-    },
+    customer,
     seo: {
       title: 'Account',
     },
