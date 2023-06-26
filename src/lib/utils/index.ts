@@ -133,7 +133,7 @@ export type UseMoneyValue = {
    * For example, `$640.00` turns into `640`.
    * `$640.42` turns into `640.42`.
    */
-  withoutTrailingZerosAndCurrency: string;
+  withoutTrailingZeroesAndCurrency: string;
 }
 
 export const useLazyFormatter = (
