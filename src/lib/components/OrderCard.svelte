@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Order } from '$lib/types'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$root/lib/components/Link.svelte'
 
 export let order: Order
 
@@ -8,7 +8,7 @@ const [legacyOrderId, key] = order!.id!.split('/').pop()!.split('?')
 const lineItems = order!.lineItems!.edges!.map((edge) => edge!.node!)
 </script>
 
-<LocaleLink
+<Link
   prefetch="intent"
   href="/account/orders/{legacyOrderId}?{key}"
 >
@@ -28,4 +28,4 @@ const lineItems = order!.lineItems!.edges!.map((edge) => edge!.node!)
     <dt>Fulfillment Status</dt>
     <dd>{order.fulfillmentStatus}</dd>
   </dl>
-</LocaleLink>
+</Link>

@@ -36,11 +36,11 @@ if (withoutTrailingZeros || withoutTrailingZeros) {
   } else if (!withoutCurrency && withoutTrailingZeros) {
     output = moneyObj.withoutTrailingZeros
   } else {
-    output = moneyObj.withoutTrailingZerosAndCurrency
+    output = moneyObj.withoutTrailingZeroesAndCurrency
   }
 }
 </script>
-<div {...$$restProps} class="inline">
+<div {...$$restProps} class="inline {$$restProps.class}">
   <span>{output}</span>
   {#if measurement && measurement.referenceUnit}
     <slot name="measurement-separator" />

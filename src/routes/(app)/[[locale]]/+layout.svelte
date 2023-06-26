@@ -2,7 +2,7 @@
 import type { LayoutServerData } from './$types'
 import HeadTemplate from '$lib/components/HeadTemplate.svelte'
 import CountrySelector from '$lib/components/CountrySelector.svelte'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$root/lib/components/Link.svelte'
 import '$root/app.css'
 
 export let data: LayoutServerData
@@ -23,9 +23,9 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
     </nav>
   </div>
   <div class="flex items-center gap-2">
-    <LocaleLink href="/search">Search</LocaleLink>
-    <LocaleLink href="/account">Account</LocaleLink>
-    <LocaleLink href="/cart">Cart - {cart?.totalQuantity ?? 0}</LocaleLink>
+    <Link href="/search">Search</Link>
+    <Link href="/account">Account</Link>
+    <Link href="/cart">Cart - {cart?.totalQuantity ?? 0}</Link>
   </div>
 </header>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Order } from '$lib/types'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$lib/components/Link.svelte'
 import OrderCard from '$lib/components/OrderCard.svelte'
 
 export let orders: Order[]
@@ -19,8 +19,8 @@ export let orders: Order[]
     </ul>
   {:else}
     <p>You haven&apos;t placed any orders yet.</p>
-    <LocaleLink href="/">
+    <Link href="/">
       Start shopping
-    </LocaleLink>
+    </Link>
   {/if}
 </div>

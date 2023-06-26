@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { PageServerData } from './$types'
 import { superForm } from 'sveltekit-superforms/client'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$root/lib/components/Link.svelte'
 
 export let data: PageServerData
 
@@ -18,7 +18,7 @@ const {
 {#if $message === 'Account activated'}
   <h1>Account Activated</h1>
   <p>Your account has been activated.</p>
-  <LocaleLink href="/account/login">Login</LocaleLink>
+  <Link href="/account/login">Login</Link>
 {:else}
   <h1>Activate Account.</h1>
   <p>Create your password to activate your account.</p>

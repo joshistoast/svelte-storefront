@@ -34,6 +34,7 @@ Almost every aspect and feature of a Shopify theme is covered in this project. H
 
 ## 📝 To Do
 
+- [ ] 📈 Sync Analytics with Shopify Admin
 - [ ] 🖼️ Optimized and performant images
 - [ ] ↕️ Filtering & Sorting collections
 - [ ] 🔗 Convert shopify links to local links where applicable

@@ -1,7 +1,8 @@
 <script lang="ts">
 import type { PageServerData } from './$types'
 import { page } from '$app/stores'
-import LocaleLink from '$root/lib/components/LocaleLink.svelte'
+import Link from '$root/lib/components/Link.svelte'
+import ProductCard from '$lib/components/Product/Card.svelte'
 import { goto } from '$app/navigation'
 
 export let data: PageServerData
@@ -62,27 +63,23 @@ let searchValue = searchTerm || $page.url.searchParams.get('q') || ''
       <h2>Trending Collections</h2>
       <div class="grid gap-4 lg:grid-cols-3">
         {#each noResultRecommendations.featuredCollections.nodes as collection}
-          <LocaleLink href="/collections/{collection.handle}">
+          <Link href="/collections/{collection.handle}">
             <div class="bg-gray-100">{collection.title}</div>
-          </LocaleLink>
+          </Link>
         {/each}
       </div>
 
       <h2>Trending Products</h2>
       <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {#each noResultRecommendations.featuredProducts.nodes as product}
-          <LocaleLink href="/products/{product.handle}">
-            <div class="bg-gray-100">{product.title}</div>
-          </LocaleLink>
+          <ProductCard {product} />
         {/each}
       </div>
     {/if}
   {:else}
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {#each products.nodes as product}
-        <LocaleLink href="/products/{product.handle}">
-          <div class="bg-gray-100">{product.title}</div>
-        </LocaleLink>
+        <ProductCard {product} />
       {/each}
     </div>
     {#if hasNextPage}

@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Customer } from '$lib/types'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$lib/components/Link.svelte'
 
 export let customer: Customer
 $: ({ firstName, lastName, email, phone } = customer)
@@ -9,9 +9,9 @@ $: ({ firstName, lastName, email, phone } = customer)
 <div class="flex flex-col gap-2 bg-gray-100">
   <div class="flex items-center">
     <h3>Profile & Security</h3>
-    <LocaleLink href="/account/edit" class="ml-auto">
+    <Link href="/account/edit" class="ml-auto">
       Edit
-    </LocaleLink>
+    </Link>
   </div>
 
   <div>

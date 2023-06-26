@@ -5,7 +5,7 @@ import { invalidateAll } from '$app/navigation'
 import { CartAction } from '$lib/types'
 import QuantityUpdate from '$lib/components/Cart/QuantityUpdate.svelte'
 import Money from '$lib/components/Money.svelte'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$root/lib/components/Link.svelte'
 
 export let data: PageServerData
 export let form: ActionData
@@ -52,7 +52,7 @@ const handleCartAction = async (event: Event, action: CartAction) => {
       product } = merchandise}
 
     <div class="flex flex-col items-start gap-2 p-2 bg-neutral-100">
-      <LocaleLink href="/products/{product.handle}">{product.title}</LocaleLink>
+      <Link href="/products/{product.handle}">{product.title}</Link>
       <div class="text-sm">
         <p><Money money={line.cost.amountPerQuantity} /> x {quantity || 0} = <Money money={line.cost.totalAmount} /></p>
         {#if merchandise.title !== 'Default Title'}

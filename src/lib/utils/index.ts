@@ -238,3 +238,8 @@ export const useLocaleKey = (locale: Locale) => {
 
   return `${locale.language.toLowerCase()}-${locale.country.toLowerCase()}`
 }
+
+export const parseAspectRatio = (aspectRatio: string) => {
+  const [width, height] = aspectRatio.split('/')
+  return Number(width) / Number(height)
+}
