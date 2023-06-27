@@ -10,6 +10,7 @@ const endpointUrl = `https://${storeDomain}/api/${apiVersion}/graphql.json`
 const shopify = new ApolloClient({
   uri: endpointUrl,
   cache: new InMemoryCache(),
+  ssrMode: true,
   headers: {
     'Accept-Language': 'en-US',
     'Content-Type': 'application/json',
