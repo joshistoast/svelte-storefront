@@ -93,7 +93,6 @@ export const collectionQuery = gql`
 `
 
 export const PRODUCT_QUERY = gql`
-  ${MEDIA_FRAGMENT}
   ${PRODUCT_VARIANT_FRAGMENT}
   query Product (
     $country: CountryCode
@@ -112,7 +111,39 @@ export const PRODUCT_QUERY = gql`
       }
       media (first: 10) {
         nodes {
-          ...Media
+           __typename
+          mediaContentType
+          alt
+          previewImage {
+            url
+          }
+          ... on MediaImage {
+            id
+            image {
+              url
+              width
+              height
+            }
+          }
+          ... on Video {
+            id
+            sources {
+              mimeType
+              url
+            }
+          }
+          ... on Model3d {
+            id
+            sources {
+              mimeType
+              url
+            }
+          }
+          ... on ExternalVideo {
+            id
+            embedUrl
+            host
+          }
         }
       }
       variants (first: 250) {
