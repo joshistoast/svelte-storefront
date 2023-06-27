@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import { productQuery, recommendedProductsQuery } from '$lib/server/data'
+import { PRODUCT_QUERY, recommendedProductsQuery } from '$lib/server/data'
 import type { PageServerLoad } from './$types'
 import invariant from 'tiny-invariant'
 
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ params, locals, setHeaders }) => {
   invariant(handle, 'Missing product handle')
 
   const { data } = await storefront.query({
-    query: productQuery,
+    query: PRODUCT_QUERY,
     variables: {
       handle,
       country: locale.country,

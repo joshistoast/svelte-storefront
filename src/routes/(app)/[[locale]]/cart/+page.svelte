@@ -5,7 +5,8 @@ import { invalidateAll } from '$app/navigation'
 import { CartAction } from '$lib/types'
 import QuantityUpdate from '$lib/components/Cart/QuantityUpdate.svelte'
 import Money from '$lib/components/Money.svelte'
-import Link from '$root/lib/components/Link.svelte'
+import Link from '$lib/components/Link.svelte'
+import Image from '$lib/components/Image.svelte'
 
 export let data: PageServerData
 export let form: ActionData
@@ -51,27 +52,41 @@ const handleCartAction = async (event: Event, action: CartAction) => {
       selectedOptions,
       product } = merchandise}
 
-    <div class="flex flex-col items-start gap-2 p-2 bg-neutral-100">
-      <Link href="/products/{product.handle}">{product.title}</Link>
-      <div class="text-sm">
-        <p><Money money={line.cost.amountPerQuantity} /> x {quantity || 0} = <Money money={line.cost.totalAmount} /></p>
-        {#if merchandise.title !== 'Default Title'}
-          {#each selectedOptions as option}
-            <p>{option.name}: {option.value}</p>
-          {/each}
-        {/if}
+    <div class="flex gap-4 p-2 bg-gray-100">
+
+      {#if merchandise.image}
+        <div class="w-24">
+          <Image
+            image={merchandise.image}
+            class="object-cover w-full"
+            aspect-ratio="1/1"
+          />
+        </div>
+      {/if}
+
+      <div class="flex flex-col items-start gap-2 p-2">
+        <Link href="/products/{product.handle}">{product.title}</Link>
+        <div class="text-sm">
+          <p><Money money={line.cost.amountPerQuantity} /> x {quantity || 0} = <Money money={line.cost.totalAmount} /></p>
+          {#if merchandise.title !== 'Default Title'}
+            {#each selectedOptions as option}
+              <p>{option.name}: {option.value}</p>
+            {/each}
+          {/if}
+        </div>
+        <form on:submit|preventDefault={(e) => handleCartAction(e, CartAction.UPDATE_CART)}>
+          <QuantityUpdate
+            {line}
+            {quantity}
+            maxQuantity={merchandise.quantityAvailable}/>
+        </form>
+        <form on:submit|preventDefault={(e) => handleCartAction(e, CartAction.REMOVE_FROM_CART)}>
+          <input type="hidden" name="lineIds" value={JSON.stringify([id])} />
+          <button type="submit">Remove Item</button>
+        </form>
       </div>
-      <form on:submit|preventDefault={(e) => handleCartAction(e, CartAction.UPDATE_CART)}>
-        <QuantityUpdate
-          {line}
-          {quantity}
-          maxQuantity={merchandise.quantityAvailable}/>
-      </form>
-      <form on:submit|preventDefault={(e) => handleCartAction(e, CartAction.REMOVE_FROM_CART)}>
-        <input type="hidden" name="lineIds" value={JSON.stringify([id])} />
-        <button type="submit">Remove Item</button>
-      </form>
     </div>
+
   {/each}
 
   <div class="flex flex-col gap-4">

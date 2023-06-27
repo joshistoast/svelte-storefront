@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params, url, locals, parent }) => {
   const { handle } = params
   const { storefront, locale } = locals
 
-  const paginationSize = 48
+  const paginationSize = 8
   const cursor = url.searchParams.get('cursor')
   const filters = undefined
   const sortKey = url.searchParams.get('sort') || 'CREATED'

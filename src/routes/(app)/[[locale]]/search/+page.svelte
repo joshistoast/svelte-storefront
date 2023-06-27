@@ -4,6 +4,7 @@ import { page } from '$app/stores'
 import Link from '$root/lib/components/Link.svelte'
 import ProductCard from '$lib/components/Product/Card.svelte'
 import { goto } from '$app/navigation'
+  import Image from '$root/lib/components/Image.svelte'
 
 export let data: PageServerData
 let { products } = data
@@ -63,8 +64,15 @@ let searchValue = searchTerm || $page.url.searchParams.get('q') || ''
       <h2>Trending Collections</h2>
       <div class="grid gap-4 lg:grid-cols-3">
         {#each noResultRecommendations.featuredCollections.nodes as collection}
-          <Link href="/collections/{collection.handle}">
-            <div class="bg-gray-100">{collection.title}</div>
+          <Link href="/collections/{collection.handle}" class="p-2 bg-gray-100">
+            {#if collection.image}
+              <Image
+                image={collection.image}
+                class="object-cover w-full"
+                aspectRatio="5/4"
+              />
+            {/if}
+            <h3>{collection.title}</h3>
           </Link>
         {/each}
       </div>

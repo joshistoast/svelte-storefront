@@ -4,10 +4,10 @@ import { enhance } from '$app/forms'
 import type {
   Localizations,
   Locale,
-  CartBuyerIdentityInput,
 } from '$lib/types'
 import { onMount } from 'svelte'
 import { tick } from 'svelte'
+  import { invalidateAll } from '$app/navigation'
 
 let selectedLocale: Locale
 let stagedLocale: Locale
@@ -56,9 +56,9 @@ const fetchCountries = async () => {
 const selectLocale = async (e: Event) => {
   const value = (e.target as HTMLSelectElement).value
   stagedLocale = countries[value]
-  // submit the form
   await tick()
   selectWrapper.querySelector('form')?.submit()
+  await invalidateAll()
 }
 const toLocaleString = (languageCode: string, countryCode: string) => {
   if (!countryCode || !languageCode) return

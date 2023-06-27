@@ -84,6 +84,7 @@ const src = imageLoader({
   srcset={srcSet}
   width={placeholderWidth}
   height={placeholderHeight}
+  {sizes}
   {decoding}
   {alt}
   style="

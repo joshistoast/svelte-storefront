@@ -92,7 +92,7 @@ export const collectionQuery = gql`
   }
 `
 
-export const productQuery = gql`
+export const PRODUCT_QUERY = gql`
   ${MEDIA_FRAGMENT}
   ${PRODUCT_VARIANT_FRAGMENT}
   query Product (

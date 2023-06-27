@@ -3,6 +3,7 @@ import type { PageData } from './$types'
 import { page } from '$app/stores'
 import { goto } from '$app/navigation'
 import ProductCard from '$lib/components/Product/Card.svelte'
+import Image from '$lib/components/Image.svelte'
 
 export let data: PageData
 let { collection } = data
@@ -29,6 +30,14 @@ const loadMore = async () => {
   loading = false
 }
 </script>
+
+{#if collection.image}
+  <Image
+    image={collection.image}
+  />
+{/if}
+
+<h1>{collection.title}</h1>
 
 <div class="grid grid-cols-6 gap-4">
   {#each collection.products.nodes as product}

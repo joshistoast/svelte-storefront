@@ -48,12 +48,13 @@ const productAnalytics = {
     />
   {/if}
 
-  {#if cardLabel}<span>{cardLabel}</span>{/if}
-  <h3>{product.title}</h3>
+  <div class="p-2">
+    {#if cardLabel}<span class="text-xs font-bold uppercase">{cardLabel}</span>{/if}
+    <h3>{product.title}</h3>
 
-  <Money withoutTrailingZeroes money={price} />
-  {#if compareAtPrice && isDiscounted(price, compareAtPrice)}
-    <Money withoutTrailingZeroes money={compareAtPrice} class="opacity-50" />
-  {/if}
-
+    <Money withoutTrailingZeroes money={price} />
+    {#if compareAtPrice && isDiscounted(price, compareAtPrice)}
+      <Money withoutTrailingZeroes money={compareAtPrice} class="opacity-50" />
+    {/if}
+  </div>
 </Link>
