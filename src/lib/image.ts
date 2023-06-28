@@ -1,1 +1,0 @@
-// image operations and optimizations

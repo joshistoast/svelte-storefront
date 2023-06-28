@@ -1,12 +1,12 @@
 <script lang="ts">
 import type { PageServerData } from './$types'
-import LocaleLink from '$lib/components/LocaleLink.svelte'
+import Link from '$root/lib/components/Link.svelte'
 
 export let data: PageServerData
 $: ({ policy } = data)
 </script>
 
 <h1>{policy.title}</h1>
-<LocaleLink href="/policies">Back to Policies</LocaleLink>
+<Link href="/policies">Back to Policies</Link>
 
 <div>{@html policy.body}</div>

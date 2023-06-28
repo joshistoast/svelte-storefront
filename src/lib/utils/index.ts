@@ -133,7 +133,7 @@ export type UseMoneyValue = {
    * For example, `$640.00` turns into `640`.
    * `$640.42` turns into `640.42`.
    */
-  withoutTrailingZerosAndCurrency: string;
+  withoutTrailingZeroesAndCurrency: string;
 }
 
 export const useLazyFormatter = (
@@ -237,4 +237,9 @@ export const useLocaleKey = (locale: Locale) => {
     return undefined
 
   return `${locale.language.toLowerCase()}-${locale.country.toLowerCase()}`
+}
+
+export const parseAspectRatio = (aspectRatio: string) => {
+  const [width, height] = aspectRatio.split('/')
+  return Number(width) / Number(height)
 }
