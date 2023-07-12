@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client/core'
 import { env } from '$env/dynamic/public'
 
-const apiVersion = env.PUBLIC_STOREFRONT_API_VERSION || '2023-04'
+const apiVersion = env.PUBLIC_STOREFRONT_API_VERSION || '2023-07'
 const storeDomain = env.PUBLIC_STORE_DOMAIN
 const token = env.PUBLIC_STOREFRONT_API_TOKEN
 

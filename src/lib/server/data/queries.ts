@@ -2,7 +2,6 @@ import { gql } from '@apollo/client/core'
 import {
   PRODUCT_CARD_FRAGMENT,
   BRANDING_FRAGMENT,
-  MEDIA_FRAGMENT,
   PRODUCT_VARIANT_FRAGMENT,
   SHOP_FRAGMENT,
   MENU_FRAGMENT,
@@ -30,6 +29,18 @@ export const layoutQuery = gql`
     }
     footerMenu: menu(handle: $footerMenuHandle) {
       ...Menu
+    }
+  }
+`
+
+export const REDIRECT_QUERY = gql`
+  query redirects($query: String) {
+    urlRedirects(first: 1, query: $query) {
+      edges {
+        node {
+          target
+        }
+      }
     }
   }
 `
