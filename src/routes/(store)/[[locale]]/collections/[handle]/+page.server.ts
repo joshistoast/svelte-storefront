@@ -2,7 +2,7 @@ import { collectionQuery } from '$lib/server/data'
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async ({ params, url, locals, parent }) => {
+export const load: PageServerLoad = async ({ params, url, locals }) => {
   const { handle } = params
   const { storefront, locale } = locals
 

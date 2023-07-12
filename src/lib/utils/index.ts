@@ -1,6 +1,34 @@
-import type { CurrencyCode, Locale, MoneyV2 } from '$lib/types'
+import type { CurrencyCode, Locale, MoneyV2, Shop } from '$lib/types'
 import { readable } from 'svelte/store'
-import { page } from '$app/stores'
+import type { Thing, WithContext, Organization } from 'schema-dts'
+
+type UseOrganizationSchema = (shop: Shop) => WithContext<Organization>
+export const useOrganizationSchema: UseOrganizationSchema = (shop: Shop) => {
+  const url = shop.primaryDomain?.url
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': url ? `${url}#organization` : undefined,
+    name: shop.name,
+    logo: shop.brand?.logo?.image?.url ?? undefined,
+    url: shop.primaryDomain?.url ?? undefined,
+    // sameAs: [],
+    potentialAction: url ? {
+      '@type': 'SearchAction',
+      target: `${url}search?q={search_term}`,
+      query: "required name=search_term"
+    } : undefined,
+  }
+}
+
+type SchemaSerializerParam = Thing | WithContext<Thing>
+export const serializeSchema = (thing: SchemaSerializerParam) => {
+  return `<script type="application/ld+json">${JSON.stringify(
+    thing,
+    null,
+    2
+  )}</script>`
+}
 
 export const useTimeAgo = (a: Date, b: Date) => {
   const msDiff = b.getTime() - a.getTime()
