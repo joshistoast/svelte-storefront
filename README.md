@@ -31,6 +31,7 @@ Almost every aspect and feature of a Shopify theme is covered in this project. H
 - 🎟️ Discount URL handling
 - 📃 Policy Pages
 - 📑 Standard Shopify Pages
+- 🔀 URL Redirects
 
 ## 📝 To Do
 
