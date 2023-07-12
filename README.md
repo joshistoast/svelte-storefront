@@ -65,7 +65,7 @@ Before getting started, make sure you have the following:
    PUBLIC_STOREFRONT_API_TOKEN="your-public-token-here"
    PUBLIC_STORE_DOMAIN="your-store.myshopify.com"
    # Optional
-   PUBLIC_STOREFRONT_API_VERSION="2023-04"
+   PUBLIC_STOREFRONT_API_VERSION="2023-07"
    ```
 
    > To get the `PUBLIC_STOREFRONT_API_TOKEN` and `PUBLIC_STORE_DOMAIN`, refer to the Shopify API Documentation [here](https://shopify.dev/docs/api/storefront#authentication).
