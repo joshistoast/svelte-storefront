@@ -267,6 +267,16 @@ export const useLocaleKey = (locale: Locale) => {
   return `${locale.language.toLowerCase()}-${locale.country.toLowerCase()}`
 }
 
+/**
+ * Takes a url and determines if it has a locale in it
+ * @returns `boolean`
+ * @param url
+ */
+export const urlHasLocale = (url: string) => {
+  const regex = /^\/[a-z]{2}-[a-z]{2}\//
+  return regex.test(url)
+}
+
 export const parseAspectRatio = (aspectRatio: string) => {
   const [width, height] = aspectRatio.split('/')
   return Number(width) / Number(height)
