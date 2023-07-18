@@ -3,12 +3,17 @@ import { page } from '$app/stores'
 
 export let href: string
 
-$: ({ selectedLocale } = $page.data)
+$: currentPath = $page.url
+$: ({ selectedLocale, layout } = $page.data)
 $: locale = `${String(selectedLocale.language)?.toLocaleLowerCase()}-${String(selectedLocale.country)?.toLocaleLowerCase()}` ?? 'en-us'
+$: url = locale === 'en-us' ? new URL(href, currentPath) : new URL(`/${locale}${href}`)
+$: shopHost = new URL(layout.shop.primaryDomain.url).host
 
-$: url = locale === 'en-us' ? href : `/${locale}${href}`
+// remove shop host from url if it's there
+$: finalHref = url.host === shopHost ? url.pathname : url.href
+
 </script>
 
-<a href={url} {...$$restProps}>
+<a href={finalHref} {...$$restProps}>
   <slot />
 </a>

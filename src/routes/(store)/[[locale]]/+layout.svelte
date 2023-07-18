@@ -21,7 +21,7 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
     </a>
     <nav class="flex items-center gap-2">
       {#each headerMenu.items as item}
-      <a href={item.url}>{item.title}</a>
+        <Link href={item.url}>{item.title}</Link>
       {/each}
     </nav>
   </div>
@@ -39,7 +39,7 @@ $: ({ shop, cart, headerMenu, footerMenu } = data.layout)
 <footer class="flex flex-col gap-5 p-4 bg-gray-100">
   <nav class="flex items-center gap-2">
     {#each footerMenu.items as item}
-    <a href={item.url}>{item.title}</a>
+      <Link href={item.url}>{item.title}</Link>
     {/each}
   </nav>
   <CountrySelector />
