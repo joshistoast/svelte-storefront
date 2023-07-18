@@ -257,6 +257,7 @@ const handleCartAction = async (event: RequestEvent, action: CartAction) => {
             }
           }, storefront)
       cartId = result.cart?.id ?? cartId
+      storefront.resetStore() // reset the apollo cache
 
       break
     }

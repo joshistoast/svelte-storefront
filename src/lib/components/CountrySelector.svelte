@@ -7,7 +7,7 @@ import type {
 } from '$lib/types'
 import { onMount } from 'svelte'
 import { tick } from 'svelte'
-  import { invalidateAll } from '$app/navigation'
+import { invalidateAll } from '$app/navigation'
 
 let selectedLocale: Locale
 let stagedLocale: Locale
