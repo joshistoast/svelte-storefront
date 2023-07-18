@@ -20,6 +20,7 @@ import {
   registerSchema,
   AccountEditSchema,
 } from '$lib/validations'
+import { urlHasLocale } from '$lib/utils'
 
 const getCustomer = async (locals: App.Locals) => {
   const { storefront, session, locale } = locals
@@ -57,15 +58,16 @@ const doLogin = async (locals: App.Locals, email: string, password: string) => {
   throw error(400, JSON.stringify(data?.customerAccessTokenCreate?.customerUserErrors))
 }
 
-export const load: PageServerLoad = async ({ locals, setHeaders }) => {
-  const { session, locale } = locals
+export const load: PageServerLoad = async ({ locals, setHeaders, url }) => {
+  const { session } = locals
   const { customerAccessToken } = session.data
 
-  const customer = !!customerAccessToken ? await getCustomer(locals) : undefined
+  const customer = customerAccessToken ? await getCustomer(locals) : undefined
 
   // Redirect if not authenticated
-  if (!customerAccessToken || !customer)
-    throw redirect(302, `${useLocaleKey(locale) ? useLocaleKey(locale) : ''}/account/login`)
+  if (!customerAccessToken || !customer) {
+    throw redirect(302, `${url}/login`)
+  }
 
   // Don't cache this page
   setHeaders({'Cache-Control': 'no-store'})

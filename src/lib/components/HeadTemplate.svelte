@@ -22,4 +22,8 @@ $: robots = seo?.robots || 'index, follow'
   <meta name="og:description" content={description} />
   <meta name="og:type" content="website" />
   <meta name="twitter:card" content="summary" />
+
+  {#if shop.brand?.image}
+    <link rel="icon" href={shop.brand?.image?.url} />
+  {/if}
 </svelte:head>

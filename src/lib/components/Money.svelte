@@ -27,10 +27,11 @@ if (!isMoney(money)) {
   throw new Error('The `money` prop must be a MoneyV2 object.')
 }
 
-let moneyObj = useMoney(locale, money)
-let output = moneyObj.localizedString
+$: moneyObj = useMoney(locale, money)
+let output: string
+$: output = moneyObj.localizedString
 
-if (withoutTrailingZeros || withoutTrailingZeros) {
+$: if (withoutCurrency || withoutTrailingZeros) {
   if (withoutCurrency && !withoutTrailingZeros) {
     output = moneyObj.amount
   } else if (!withoutCurrency && withoutTrailingZeros) {
