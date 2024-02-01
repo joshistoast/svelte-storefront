@@ -1,13 +1,13 @@
-import type { PageServerLoad } from './$types'
-import { ARTICLE_QUERY } from '$lib/server/data'
-import { error } from '@sveltejs/kit'
+import type { PageServerLoad } from "./$types";
+import { ARTICLE_QUERY } from "$lib/server/data";
+import { error } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-  const { storefront, locale } = locals
-  const { language, country } = locale
+  const { storefront, locale } = locals;
+  const { language, country } = locale;
 
-  const blogHandle = 'journal'
-  const { handle: articleHandle } = params
+  const blogHandle = "journal";
+  const { handle: articleHandle } = params;
 
   const { data } = await storefront.query({
     query: ARTICLE_QUERY,
@@ -16,18 +16,17 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       articleHandle,
       language,
     },
-  })
+  });
 
-  if (!data?.blog?.articleByHandle)
-    throw error(404, 'Article not found')
+  if (!data?.blog?.articleByHandle) throw error(404, "Article not found");
 
-  const article = data.blog.articleByHandle
+  const article = data.blog.articleByHandle;
 
   const formattedDate = new Intl.DateTimeFormat(`${language}-${country}`, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(article?.publishedAt))
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(article?.publishedAt));
 
   return {
     seo: {
@@ -37,6 +36,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     article: {
       ...article,
       formattedDate,
-    }
-  }
-}
+    },
+  };
+};

@@ -1,25 +1,24 @@
-import type { PageServerLoad } from './$types'
-import { PAGE_QUERY } from '$lib/server/data'
-import { error } from '@sveltejs/kit'
-import type { Page } from '$lib/types'
+import type { PageServerLoad } from "./$types";
+import { PAGE_QUERY } from "$lib/server/data";
+import { error } from "@sveltejs/kit";
+import type { Page } from "$lib/types";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
-  const { storefront, locale } = locals
-  const { language } = locale
-  const { handle } = params
+  const { storefront, locale } = locals;
+  const { language } = locale;
+  const { handle } = params;
 
-  const { data } = await storefront.query<{page: Page}>({
+  const { data } = await storefront.query<{ page: Page }>({
     query: PAGE_QUERY,
     variables: {
       handle,
       language,
     },
-  })
+  });
 
-  const { page } = data
+  const { page } = data;
 
-  if (!page)
-    throw error(404, 'Page not found')
+  if (!page) throw error(404, "Page not found");
 
   return {
     seo: {
@@ -27,5 +26,5 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       description: page?.seo?.description,
     },
     page,
-  }
-}
+  };
+};

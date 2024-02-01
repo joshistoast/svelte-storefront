@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client/core'
+import { gql } from "@apollo/client/core";
 import {
   PRODUCT_CARD_FRAGMENT,
   BRANDING_FRAGMENT,
@@ -10,17 +10,17 @@ import {
   USER_ERROR_FRAGMENT,
   ORDER_CARD_FRAGMENT,
   FEATURED_COLLECTION_FRAGMENT,
-} from './fragments'
+} from "./fragments";
 
 export const layoutQuery = gql`
   ${BRANDING_FRAGMENT}
   ${SHOP_FRAGMENT}
   ${MENU_FRAGMENT}
-  query layout (
+  query layout(
     $language: LanguageCode
     $headerMenuHandle: String!
     $footerMenuHandle: String!
-  ) @inContext (language: $language) {
+  ) @inContext(language: $language) {
     shop {
       ...Shop
     }
@@ -31,7 +31,7 @@ export const layoutQuery = gql`
       ...Menu
     }
   }
-`
+`;
 
 export const REDIRECT_QUERY = gql`
   query redirects($query: String) {
@@ -43,11 +43,11 @@ export const REDIRECT_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const collectionQuery = gql`
   ${PRODUCT_CARD_FRAGMENT}
-  query CollectionDetails (
+  query CollectionDetails(
     $handle: String!
     $country: CountryCode
     $language: LanguageCode
@@ -56,7 +56,7 @@ export const collectionQuery = gql`
     $filters: [ProductFilter!]
     $sortKey: ProductCollectionSortKeys!
     $reverse: Boolean
-  ) @inContext (country: $country, language: $language) {
+  ) @inContext(country: $country, language: $language) {
     collection(handle: $handle) {
       id
       handle
@@ -74,10 +74,10 @@ export const collectionQuery = gql`
         altText
       }
       products(
-        first: $pageBy,
-        after: $cursor,
-        filters: $filters,
-        sortKey: $sortKey,
+        first: $pageBy
+        after: $cursor
+        filters: $filters
+        sortKey: $sortKey
         reverse: $reverse
       ) {
         filters {
@@ -101,15 +101,15 @@ export const collectionQuery = gql`
       }
     }
   }
-`
+`;
 
 export const PRODUCT_QUERY = gql`
   ${PRODUCT_VARIANT_FRAGMENT}
-  query Product (
+  query Product(
     $country: CountryCode
     $language: LanguageCode
     $handle: String!
-  ) @inContext (country: $country, language: $language) {
+  ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
       id
       title
@@ -120,9 +120,9 @@ export const PRODUCT_QUERY = gql`
         name
         values
       }
-      media (first: 10) {
+      media(first: 10) {
         nodes {
-           __typename
+          __typename
           mediaContentType
           alt
           previewImage {
@@ -157,7 +157,7 @@ export const PRODUCT_QUERY = gql`
           }
         }
       }
-      variants (first: 250) {
+      variants(first: 250) {
         nodes {
           ...ProductVariantFragment
         }
@@ -168,7 +168,7 @@ export const PRODUCT_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const SEARCH_QUERY = gql`
   ${PRODUCT_CARD_FRAGMENT}
@@ -183,11 +183,11 @@ export const SEARCH_QUERY = gql`
     $startCursor: String
   ) @inContext(country: $country, language: $language) {
     products(
-      first: $first,
-      last: $last,
-      before: $startCursor,
-      after: $endCursor,
-      sortKey: RELEVANCE,
+      first: $first
+      last: $last
+      before: $startCursor
+      after: $endCursor
+      sortKey: RELEVANCE
       query: $searchTerm
     ) {
       nodes {
@@ -201,7 +201,7 @@ export const SEARCH_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const FEATURED_ITEMS_QUERY = gql`
   query FeaturedItems(
@@ -223,16 +223,16 @@ export const FEATURED_ITEMS_QUERY = gql`
 
   ${PRODUCT_CARD_FRAGMENT}
   ${FEATURED_COLLECTION_FRAGMENT}
-`
+`;
 
 export const recommendedProductsQuery = gql`
   ${PRODUCT_CARD_FRAGMENT}
-  query productRecommendations (
+  query productRecommendations(
     $productId: ID!
     $count: Int!
     $country: CountryCode
     $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
+  ) @inContext(country: $country, language: $language) {
     recommended: productRecommendations(productId: $productId) {
       ...ProductCard
     }
@@ -242,30 +242,24 @@ export const recommendedProductsQuery = gql`
       }
     }
   }
-`
+`;
 
 export const CART_QUERY = gql`
   ${CART_FRAGMENT}
-  query CartQuery (
-    $cartId: ID!,
-    $country: CountryCode,
-    $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
-    cart (id: $cartId) {
+  query CartQuery($cartId: ID!, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    cart(id: $cartId) {
       ...CartFragment
     }
   }
-`
+`;
 
 export const CREATE_CART_MUTATION = gql`
   ${LINES_CART_FRAGMENT}
   ${USER_ERROR_FRAGMENT}
-  mutation (
-    $input: CartInput!
-    $country: CountryCode
-    $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
-    cartCreate (input: $input) {
+  mutation ($input: CartInput!, $country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    cartCreate(input: $input) {
       cart {
         ...CartLinesFragment
         checkoutUrl
@@ -275,7 +269,7 @@ export const CREATE_CART_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const ADD_LINES_MUTATION = gql`
   ${LINES_CART_FRAGMENT}
@@ -285,8 +279,8 @@ export const ADD_LINES_MUTATION = gql`
     $lines: [CartLineInput!]!
     $country: CountryCode
     $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
-    cartLinesAdd (cartId: $cartId, lines: $lines) {
+  ) @inContext(country: $country, language: $language) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
         ...CartLinesFragment
       }
@@ -295,7 +289,7 @@ export const ADD_LINES_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const REMOVE_LINES_MUTATION = gql`
   ${LINES_CART_FRAGMENT}
@@ -305,8 +299,8 @@ export const REMOVE_LINES_MUTATION = gql`
     $lineIds: [ID!]!
     $country: CountryCode
     $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
-    cartLinesRemove (cartId: $cartId, lineIds: $lineIds) {
+  ) @inContext(country: $country, language: $language) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
         ...CartLinesFragment
       }
@@ -315,16 +309,16 @@ export const REMOVE_LINES_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const DISCOUNT_CODES_UPDATE = gql`
   ${CART_FRAGMENT}
-  mutation cartDiscountCodesUpdate (
+  mutation cartDiscountCodesUpdate(
     $cartId: ID!
     $discountCodes: [String!]
     $country: CountryCode
-  ) @inContext (country: $country) {
-    cartDiscountCodesUpdate (cartId: $cartId, discountCodes: $discountCodes) {
+  ) @inContext(country: $country) {
+    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
       cart {
         ...CartFragment
       }
@@ -334,7 +328,7 @@ export const DISCOUNT_CODES_UPDATE = gql`
       }
     }
   }
-`
+`;
 
 export const LINES_UPDATE_MUTATION = gql`
   ${LINES_CART_FRAGMENT}
@@ -344,8 +338,8 @@ export const LINES_UPDATE_MUTATION = gql`
     $lines: [CartLineUpdateInput!]!
     $country: CountryCode
     $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
-    cartLinesUpdate (cartId: $cartId, lines: $lines) {
+  ) @inContext(country: $country, language: $language) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
       cart {
         ...CartLinesFragment
       }
@@ -354,7 +348,7 @@ export const LINES_UPDATE_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const UPDATE_CART_BUYER = gql`
   ${USER_ERROR_FRAGMENT}
@@ -363,8 +357,8 @@ export const UPDATE_CART_BUYER = gql`
     $buyer: CartBuyerIdentityInput!
     $country: CountryCode
     $language: LanguageCode
-  ) @inContext (country: $country, language: $language) {
-    cartBuyerIdentityUpdate (cartId: $cartId, buyerIdentity: $buyer) {
+  ) @inContext(country: $country, language: $language) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyer) {
       cart {
         id
         buyerIdentity {
@@ -378,7 +372,7 @@ export const UPDATE_CART_BUYER = gql`
       }
     }
   }
-`
+`;
 
 export const POLICIES_QUERY = gql`
   fragment PolicyIndex on ShopPolicy {
@@ -408,7 +402,7 @@ export const POLICIES_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const POLICY_CONTENT_QUERY = gql`
   fragment Policy on ShopPolicy {
@@ -440,7 +434,7 @@ export const POLICY_CONTENT_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const SITEMAP_QUERY = gql`
   query sitemaps($urlLimits: Int, $language: LanguageCode)
@@ -478,7 +472,7 @@ export const SITEMAP_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const ARTICLE_QUERY = gql`
   query ArticleDetails(
@@ -508,7 +502,7 @@ export const ARTICLE_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const BLOGS_QUERY = gql`
   query Blog(
@@ -551,7 +545,7 @@ export const BLOGS_QUERY = gql`
     publishedAt
     title
   }
-`
+`;
 
 export const PAGE_QUERY = gql`
   query PageDetails($language: LanguageCode, $handle: String!)
@@ -566,7 +560,7 @@ export const PAGE_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const LOGIN_MUTATION = gql`
   mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
@@ -582,7 +576,7 @@ export const LOGIN_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const CUSTOMER_QUERY = gql`
   ${ORDER_CARD_FRAGMENT}
@@ -635,7 +629,7 @@ export const CUSTOMER_QUERY = gql`
       }
     }
   }
-`
+`;
 
 export const CUSTOMER_CREATE_MUTATION = gql`
   mutation customerCreate($input: CustomerCreateInput!) {
@@ -650,7 +644,7 @@ export const CUSTOMER_CREATE_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const CUSTOMER_ACTIVATE_MUTATION = gql`
   mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
@@ -666,11 +660,17 @@ export const CUSTOMER_ACTIVATE_MUTATION = gql`
       }
     }
   }
-`
+`;
 
 export const CUSTOMER_UPDATE_MUTATION = gql`
-  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
-    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+  mutation customerUpdate(
+    $customerAccessToken: String!
+    $customer: CustomerUpdateInput!
+  ) {
+    customerUpdate(
+      customerAccessToken: $customerAccessToken
+      customer: $customer
+    ) {
       customer {
         id
         firstName
@@ -689,4 +689,4 @@ export const CUSTOMER_UPDATE_MUTATION = gql`
       }
     }
   }
-`
+`;

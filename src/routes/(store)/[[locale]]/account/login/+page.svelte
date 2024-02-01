@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PageServerData } from './$types'
 import { superForm } from 'sveltekit-superforms/client'
+import Link from '$lib/components/Link.svelte'
 
 export let data: PageServerData
 const { shop } = data.layout
@@ -57,7 +58,7 @@ const {
       Log{#if $submitting}ging{/if} in
     </button>
 
-    <p>New to {shop.name}? <a href="/account/register">Register</a></p>
+    <p>New to {shop.name}? <Link href="/account/register">Register</Link></p>
   </form>
 </div>
 

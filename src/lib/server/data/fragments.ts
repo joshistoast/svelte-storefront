@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client/core'
+import { gql } from "@apollo/client/core";
 
 export const BRANDING_FRAGMENT = gql`
   fragment Branding on Brand {
@@ -29,7 +29,7 @@ export const BRANDING_FRAGMENT = gql`
       }
     }
   }
-`
+`;
 
 export const SHOP_FRAGMENT = gql`
   ${BRANDING_FRAGMENT}
@@ -44,7 +44,7 @@ export const SHOP_FRAGMENT = gql`
       ...Branding
     }
   }
-`
+`;
 
 export const MENU_ITEM_FRAGMENT = gql`
   fragment MenuItem on MenuItem {
@@ -55,14 +55,14 @@ export const MENU_ITEM_FRAGMENT = gql`
     type
     url
   }
-`
+`;
 
 export const CHILD_MENU_ITEM_FRAGMENT = gql`
   ${MENU_ITEM_FRAGMENT}
   fragment ChildMenuItem on MenuItem {
     ...MenuItem
   }
-`
+`;
 
 export const PARENT_MENU_ITEM_FRAGMENT = gql`
   ${MENU_ITEM_FRAGMENT}
@@ -73,7 +73,7 @@ export const PARENT_MENU_ITEM_FRAGMENT = gql`
       ...ChildMenuItem
     }
   }
-`
+`;
 
 export const MENU_FRAGMENT = gql`
   ${PARENT_MENU_ITEM_FRAGMENT}
@@ -83,7 +83,7 @@ export const MENU_FRAGMENT = gql`
       ...ParentMenuItem
     }
   }
-`
+`;
 
 export const MEDIA_FRAGMENT = gql`
   fragment Media on Media {
@@ -121,7 +121,7 @@ export const MEDIA_FRAGMENT = gql`
       host
     }
   }
-`
+`;
 
 export const PRODUCT_CARD_FRAGMENT = gql`
   fragment ProductCard on Product {
@@ -157,7 +157,7 @@ export const PRODUCT_CARD_FRAGMENT = gql`
       }
     }
   }
-`
+`;
 
 export const PRODUCT_VARIANT_FRAGMENT = gql`
   fragment ProductVariantFragment on ProductVariant {
@@ -193,14 +193,14 @@ export const PRODUCT_VARIANT_FRAGMENT = gql`
       handle
     }
   }
-`
+`;
 
 export const MONEY_FRAGMENT = gql`
   fragment MoneyFragment on MoneyV2 {
     currencyCode
     amount
   }
-`
+`;
 
 export const IMAGE_FRAGMENT = gql`
   fragment ImageFragment on Image {
@@ -210,7 +210,7 @@ export const IMAGE_FRAGMENT = gql`
     width
     height
   }
-`
+`;
 
 export const CART_FRAGMENT = gql`
   ${MONEY_FRAGMENT}
@@ -258,7 +258,6 @@ export const CART_FRAGMENT = gql`
             ... on ProductVariant {
               id
               availableForSale
-              quantityAvailable
               compareAtPrice {
                 ...MoneyFragment
               }
@@ -307,14 +306,14 @@ export const CART_FRAGMENT = gql`
       code
     }
   }
-`
+`;
 
 export const LINES_CART_FRAGMENT = gql`
   fragment CartLinesFragment on Cart {
     id
     totalQuantity
   }
-`
+`;
 
 export const USER_ERROR_FRAGMENT = gql`
   fragment ErrorFragment on CartUserError {
@@ -322,7 +321,7 @@ export const USER_ERROR_FRAGMENT = gql`
     field
     code
   }
-`
+`;
 
 export const ORDER_CARD_FRAGMENT = gql`
   fragment OrderCard on Order {
@@ -351,7 +350,7 @@ export const ORDER_CARD_FRAGMENT = gql`
       }
     }
   }
-`
+`;
 
 export const FEATURED_COLLECTION_FRAGMENT = gql`
   fragment FeaturedCollectionDetails on Collection {
@@ -365,4 +364,4 @@ export const FEATURED_COLLECTION_FRAGMENT = gql`
       url
     }
   }
-`
+`;

@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PageServerData } from './$types'
 import { superForm } from 'sveltekit-superforms/client'
+import Link from '$lib/components/Link.svelte'
 
 export let data: PageServerData
 
@@ -56,7 +57,7 @@ const {
       Creat{#if $submitting}ting{:else}e {/if} account
     </button>
 
-    <p>Already have an account? <a href="/account/login">Log in</a></p>
+    <p>Already have an account? <Link href="/account/login">Log in</Link></p>
   </form>
 </div>
 

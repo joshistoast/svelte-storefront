@@ -1,5 +1,5 @@
 export const GET = async (): Promise<Response> => {
-  const sitemapUrl = undefined // TODO: this
+  const sitemapUrl = undefined; // TODO: this
 
   const robots = `
     User-agent: *
@@ -10,7 +10,7 @@ export const GET = async (): Promise<Response> => {
     Disallow: /checkout
     Disallow: /carts
     Disallow: /account
-    ${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}
+    ${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ""}
 
     # Google adsbot ignores robots.txt unless specifically named
     User-agent: adsbot-google
@@ -21,7 +21,7 @@ export const GET = async (): Promise<Response> => {
 
     User-agent: Pinterest
     Crawl-delay: 1
-  `.trim()
+  `.trim();
 
-  return new Response(robots)
-}
+  return new Response(robots);
+};
