@@ -1,13 +1,13 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-})
+});
 
 export const registerSchema = z.object({
   ...loginSchema.shape,
-})
+});
 
 export const passwordSetSchema = z
   .object({
@@ -15,11 +15,11 @@ export const passwordSetSchema = z
     confirmPassword: z.string().min(8),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
-const phoneNumberRegex = /^\+[1-9]\d{10,14}$/
+const phoneNumberRegex = /^\+[1-9]\d{10,14}$/;
 export const AccountEditSchema = z
   .object({
     firstName: z.string().min(2).optional(),
@@ -30,13 +30,17 @@ export const AccountEditSchema = z
     newPassword: z.string().min(8).optional(),
     confirmPassword: z.string().min(8).optional(),
   })
-  .refine(({ newPassword, confirmPassword }) =>
-    newPassword === confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
-  .refine(({ currentPassword, newPassword }) =>
-    currentPassword !== newPassword, {
-    message: 'New password must be different from current password',
-    path: ['newPassword'],
-  })
+  .refine(
+    ({ newPassword, confirmPassword }) => newPassword === confirmPassword,
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    },
+  )
+  .refine(
+    ({ currentPassword, newPassword }) => currentPassword !== newPassword,
+    {
+      message: "New password must be different from current password",
+      path: ["newPassword"],
+    },
+  );

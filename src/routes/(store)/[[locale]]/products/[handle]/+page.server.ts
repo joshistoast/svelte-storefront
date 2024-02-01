@@ -1,12 +1,12 @@
-import { error } from '@sveltejs/kit'
-import { PRODUCT_QUERY, recommendedProductsQuery } from '$lib/server/data'
-import type { PageServerLoad } from './$types'
-import invariant from 'tiny-invariant'
+import { error } from "@sveltejs/kit";
+import { PRODUCT_QUERY, recommendedProductsQuery } from "$lib/server/data";
+import type { PageServerLoad } from "./$types";
+import invariant from "tiny-invariant";
 
 export const load: PageServerLoad = async ({ params, locals, setHeaders }) => {
-  const { storefront, locale } = locals
-  const { handle } = params
-  invariant(handle, 'Missing product handle')
+  const { storefront, locale } = locals;
+  const { handle } = params;
+  invariant(handle, "Missing product handle");
 
   const { data } = await storefront.query({
     query: PRODUCT_QUERY,
@@ -15,15 +15,15 @@ export const load: PageServerLoad = async ({ params, locals, setHeaders }) => {
       country: locale.country,
       language: locale.language,
     },
-  })
-  const { product } = data
+  });
+  const { product } = data;
 
   if (!product?.id) {
-    throw error(404, 'Product not found')
+    throw error(404, "Product not found");
   }
 
-  const firstVariant = product.variants?.nodes?.[0]
-  const selectedVariant = product.selectedVariant ?? firstVariant
+  const firstVariant = product.variants?.nodes?.[0];
+  const selectedVariant = product.selectedVariant ?? firstVariant;
 
   const productAnalytics = {
     productGid: product.id,
@@ -32,35 +32,36 @@ export const load: PageServerLoad = async ({ params, locals, setHeaders }) => {
     variantName: selectedVariant.title,
     brand: product.vendor ?? undefined,
     price: selectedVariant.price.amount,
-  }
+  };
 
-  const { recommended } = await storefront.query({
-    query: recommendedProductsQuery,
-    variables: {
-      productId: product.id,
-      count: 12,
-      country: locale.country,
-      language: locale.language,
-    }
-  })
+  const { recommended } = await storefront
+    .query({
+      query: recommendedProductsQuery,
+      variables: {
+        productId: product.id,
+        count: 12,
+        country: locale.country,
+        language: locale.language,
+      },
+    })
     .then(({ data }) => ({
       recommended: data.recommended,
-      additional: data.additional.nodes
+      additional: data.additional.nodes,
     }))
     .catch((err: Error) => {
-      console.error(err.message)
-      return { recommended: [], additional: [] }
-    })
+      console.error(err.message);
+      return { recommended: [], additional: [] };
+    });
 
   const seo = {
     title: product.seo.title || product.title,
     description: product.seo.description || product.description,
-  }
+  };
 
   // Short Cache-Control to allow for quick updates
   setHeaders({
-    'Cache-Control': 'public, max-age=1, stale-while-revalidate=9'
-  })
+    "Cache-Control": "public, max-age=1, stale-while-revalidate=9",
+  });
 
   return {
     product,
@@ -69,7 +70,7 @@ export const load: PageServerLoad = async ({ params, locals, setHeaders }) => {
     analytics: {
       resourceId: product.id,
       products: [productAnalytics],
-      totalValue: parseFloat(selectedVariant.price.amount)
-    }
-  }
-}
+      totalValue: parseFloat(selectedVariant.price.amount),
+    },
+  };
+};
